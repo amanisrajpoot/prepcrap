@@ -1,0 +1,60 @@
+---
+title: "Networking & API Protocols"
+slug: "networking"
+order: 14
+icon: "🌐"
+concept: "Understanding how data travels between the client and server is foundational. This includes the OSI model (specifically TCP vs UDP), the evolution of HTTP (HTTP/1.1 vs HTTP/2 vs HTTP/3), real-time communication via WebSockets, and API paradigms like REST, GraphQL, and gRPC."
+interviewScript: "When architecting an API, the transport protocol heavily influences the design. For standard CRUD operations where caching and statelessness are desired, REST over HTTP/1.1 or HTTP/2 is ideal. If the client needs deeply nested, variable data without over-fetching, I introduce GraphQL. For internal microservice-to-microservice communication, where latency and payload size are critical, I prefer gRPC over HTTP/2 using Protocol Buffers. If the application requires bi-directional, real-time data—like a chat app or a live trading dashboard—I establish a persistent TCP connection using WebSockets."
+pitfalls:
+  - "Using HTTP GET requests to mutate data on the server (violating REST principles)."
+  - "Misunderstanding HTTP/2 multiplexing and unnecessarily using domain sharding or image sprites."
+  - "Implementing GraphQL without a DataLoader, leading to the N+1 query problem."
+  - "Using WebSockets for one-directional event streaming when Server-Sent Events (SSE) would be much simpler."
+exercises:
+  1-day:
+    - "Explain the difference between TCP and UDP."
+    - "What is the primary advantage of HTTP/2 over HTTP/1.1?"
+  3-day:
+    - "Describe the core principles of a RESTful API."
+    - "Explain when you would choose GraphQL over REST."
+    - "What are Server-Sent Events (SSE) and how do they differ from WebSockets?"
+  7-day:
+    - "Design a real-time collaborative document editor. Focus on the WebSocket message format and conflict resolution (OT or CRDTs)."
+    - "Explain how gRPC uses Protocol Buffers and why it's faster than JSON over REST."
+    - "Describe the TCP 3-way handshake and the concept of Head-of-Line (HoL) blocking."
+---
+
+## Visual Concept: REST vs GraphQL
+
+```text
+ ┌──────────────────────────┐    ┌──────────────────────────┐
+ │ REST API (Multiple Trips)│    │ GRAPHQL API (One Trip)   │
+ │                          │    │                          │
+ │ Client                   │    │ Client                   │
+ │   │ GET /users/1         │    │   │ POST /graphql        │
+ │   ├───────────────────>  │    │   │ query {              │
+ │   │      {user data}     │    │   │   user(id:1) {       │
+ │   <───────────────────┤  │    │   │     name             │
+ │   │ GET /users/1/posts   │    │   │     posts { title }  │
+ │   ├───────────────────>  │    │   │   }                  │
+ │   │      [post data]     │    │   │ }                    │
+ │   <───────────────────┤  │    │   ├───────────────────>  │
+ │                          │    │   │                      │
+ │ * Prone to over-fetching │    │   │ { user, posts }      │
+ │ * Prone to under-fetching│    │   <───────────────────┤  │
+ └──────────────────────────┘    └──────────────────────────┘
+```
+
+## Deep Dive: HTTP/2 Multiplexing
+
+HTTP/1.1 required multiple TCP connections to download multiple assets simultaneously, leading to browser connection limits.
+
+<Quiz
+  question="HTTP/2 introduced 'Multiplexing'. What does this actually mean in practice?"
+  optionsJSON={`[
+    { "id": "a", "text": "It allows the server to send multiple HTML files at once.", "isCorrect": false },
+    { "id": "b", "text": "It allows multiple HTTP requests and responses to be sent simultaneously over a single TCP connection.", "isCorrect": true, "explanation": "Multiplexing solves the Head-of-Line blocking problem at the HTTP layer. Instead of opening multiple TCP connections or waiting for one request to finish before starting the next, HTTP/2 interweaves the data frames of multiple requests over one connection." },
+    { "id": "c", "text": "It automatically compresses JavaScript and CSS files.", "isCorrect": false },
+    { "id": "d", "text": "It switches the underlying transport protocol from TCP to UDP.", "isCorrect": false }
+  ]`}
+/>

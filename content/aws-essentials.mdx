@@ -1,0 +1,73 @@
+---
+title: "AWS Essentials"
+slug: "aws-essentials"
+order: 10
+icon: "☁️"
+concept: "Full-stack developers must understand the foundational AWS building blocks to deploy and scale applications. This includes compute (EC2, ECS, Lambda), storage (S3), databases (RDS, DynamoDB), networking (VPC, Route53, API Gateway), and content delivery (CloudFront)."
+interviewScript: "When designing architecture on AWS, I focus on decoupling and right-sizing. For standard web APIs, ECS with Fargate offers a great balance of containerized control without managing underlying EC2 instances. For highly spiky or event-driven workloads, the serverless trio—API Gateway, Lambda, and DynamoDB—is unmatched for cost-efficiency. Static frontend assets (React/Next.js client exports) absolutely belong in an S3 bucket fronted by CloudFront for global caching. I also heavily rely on SQS and SNS to decouple microservices and handle asynchronous background jobs reliably."
+pitfalls:
+  - "Putting EC2 instances or RDS databases in a Public Subnet without proper Security Groups, exposing them to the internet."
+  - "Serving static assets directly from an S3 bucket instead of using a CloudFront CDN (higher latency, higher cost)."
+  - "Hardcoding AWS credentials in application code instead of using IAM Roles."
+  - "Using a relational DB (RDS) for simple key-value lookups when DynamoDB would be 10x cheaper and faster."
+exercises:
+  1-day:
+    - "Explain the difference between S3, EBS, and EFS."
+    - "What is the purpose of an IAM Role versus an IAM User?"
+  3-day:
+    - "Design a basic highly available architecture using an ALB, Auto Scaling Group, and Multi-AZ RDS."
+    - "Explain the cold start problem in AWS Lambda and how to mitigate it."
+    - "Describe how a CloudFront distribution caches content and how you can invalidate it."
+  7-day:
+    - "Architect an event-driven image processing pipeline using S3 event notifications, SQS, and Lambda."
+    - "Design a DynamoDB schema with secondary indexes (GSI) for a real-time chat application."
+    - "Write an Infrastructure as Code (IaC) template using Terraform or AWS CDK to deploy a serverless API."
+---
+
+## Visual Concept: Serverless vs Containers
+
+```text
+ ┌──────────────────────────┐    ┌──────────────────────────┐
+ │ SERVERLESS (Lambda)      │    │ CONTAINERS (ECS/Fargate) │
+ │                          │    │                          │
+ │     [ API Gateway ]      │    │     [ Load Balancer ]    │
+ │           │              │    │           │              │
+ │  ┌────────▼───────────┐  │    │  ┌────────▼───────────┐  │
+ │  │ AWS Lambda         │  │    │  │ ECS Task (Running) │  │
+ │  │ (Wakes on request) │  │    │  │ (Always running)   │  │
+ │  └────────┬───────────┘  │    │  └────────┬───────────┘  │
+ │           │              │    │           │              │
+ │     [ DynamoDB ]         │    │       [ Amazon RDS ]     │
+ │                          │    │                          │
+ │ * Scales to zero         │    │ * Baseline cost always   │
+ │ * Millisecond billing    │    │ * Hourly billing         │
+ │ * Has Cold Starts        │    │ * Zero Cold Starts       │
+ │ * 15 min max execution   │    │ * Unlimited execution    │
+ └──────────────────────────┘    └──────────────────────────┘
+```
+
+## Deep Dive: Serverless vs Containers
+
+Choosing between Lambda (Serverless) and ECS/EKS (Containers) is a classic system design tradeoff.
+
+<Quiz
+  question="You are building a web scraping service that takes 10 to 15 minutes to run per job. Which compute service is the BEST fit?"
+  optionsJSON={`[
+    { "id": "a", "text": "AWS Lambda", "isCorrect": false },
+    { "id": "b", "text": "AWS ECS (Fargate) or EC2", "isCorrect": true, "explanation": "AWS Lambda has a hard maximum execution timeout of 15 minutes. Long-running jobs that approach or exceed this limit should be run on containers (ECS/Fargate) or EC2 instances." },
+    { "id": "c", "text": "Amazon S3", "isCorrect": false },
+    { "id": "d", "text": "AWS API Gateway", "isCorrect": false }
+  ]`}
+/>
+
+## Architecture Quick Reference
+
+| Requirement | Preferred AWS Service |
+|---|---|
+| Hosting a React SPA | S3 + CloudFront |
+| Running a Docker container | ECS (Fargate) |
+| Event-driven, short scripts | AWS Lambda |
+| Relational data with complex JOINs | Amazon RDS (PostgreSQL/MySQL) |
+| Massive scale Key-Value store | Amazon DynamoDB |
+| Decoupling microservices | Amazon SQS & SNS |
+| User Authentication | Amazon Cognito |

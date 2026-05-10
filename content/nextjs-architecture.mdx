@@ -1,0 +1,71 @@
+---
+title: "Next.js Architecture"
+slug: "nextjs-architecture"
+order: 5
+icon: "▲"
+concept: "Next.js App Router fundamentally shifts React from a client-side library to a server-first framework. React Server Components (RSC) allow components to render exclusively on the server, reducing bundle size and accessing backend resources directly. Client Components are pushed to the leaves of the UI tree for interactivity."
+interviewScript: "In the Next.js App Router, the default paradigm is Server Components. This is a massive shift. Server Components never ship JavaScript to the client; they send a serialized representation of the UI. This means I can securely query a database directly inside my component without an API route. When I need interactivity—like onClick handlers, state, or hooks—I explicitly define a Client Component using the 'use client' directive. The key to performance in Next.js is understanding the caching layers: the Request Memoization, the Data Cache, the Full Route Cache (for SSG), and the Router Cache on the client."
+pitfalls:
+  - "Importing server-only modules (like 'fs' or database drivers) into a Client Component."
+  - "Passing non-serializable data (like functions or Date objects) as props from a Server Component to a Client Component."
+  - "Using 'use client' at the top of the component tree, effectively disabling Server Components for the entire app."
+  - "Not understanding that Client Components are still pre-rendered (SSR) on the server for the initial page load."
+exercises:
+  1-day:
+    - "Explain the difference between a Server Component and a Client Component."
+    - "Describe the 4 layers of caching in the Next.js App Router."
+  3-day:
+    - "Refactor a bloated Client Component by moving data fetching to a parent Server Component."
+    - "Implement Revalidation (ISR) using the 'revalidatePath' function."
+    - "Explain how the 'use server' directive differs from 'use client'."
+  7-day:
+    - "Build a custom caching mechanism that mimics the Next.js Data Cache."
+    - "Implement an optimistic UI update using Server Actions and useOptimistic."
+    - "Debug a complex hydration mismatch error caused by inconsistent server/client rendering."
+---
+
+## Visual Concept: The RSC Boundary
+
+```text
+ ┌───────────────────────────┐
+ │ SERVER                    │
+ │ ┌───────────────────────┐ │
+ │ │ Server Component      │ │
+ │ │ (Reads DB, no JS sent)│ │
+ │ └───────┬───────────────┘ │
+ │         │                 │
+ │ ┌───────▼───────────────┐ │
+ │ │ Client Component      │ │
+ │ │ 'use client'          │ │
+ │ └───────┬───────────────┘ │
+ └─────────┼─────────────────┘
+           │ Serialized JSON (RSC Payload)
+ ┌─────────▼─────────────────┐
+ │ BROWSER                   │
+ │ ┌───────────────────────┐ │
+ │ │ React Hydrates Client │ │
+ │ │ Component (Interactivity│ │
+ │ └───────────────────────┘ │
+ └───────────────────────────┘
+```
+
+## Deep Dive: Server vs Client Components
+
+Next.js forces you to think about *where* your code executes.
+
+<InteractiveEditor
+  template="react"
+  filesJSON={`{
+    "/App.js": "import { useState } from 'react';\\n\\n// Imagine this is a Server Component fetching data securely\\nfunction ServerComponent() {\\n  const secretData = \\"Super Secret DB Key: 12345\\";\\n  return (\\n    <div style={{ padding: 10, border: '1px solid gray' }}>\\n      <h4>Server Component</h4>\\n      <p>I can access backend secrets: {secretData}</p>\\n      {/* We pass serializable data to the Client Component */}\\n      <ClientComponent title=\\"Interactive Counter\\" />\\n    </div>\\n  );\\n}\\n\\n// This requires 'use client' in Next.js because of useState\\nfunction ClientComponent({ title }) {\\n  const [count, setCount] = useState(0);\\n  return (\\n    <div style={{ padding: 10, border: '1px dashed blue', marginTop: 10 }}>\\n      <h4>Client Component</h4>\\n      <p>{title}</p>\\n      <button onClick={() => setCount(c => c + 1)}>Clicks: {count}</button>\\n    </div>\\n  );\\n}\\n\\nexport default function App() {\\n  return <ServerComponent />;\\n}"
+  }`}
+/>
+
+<Quiz
+  question="Which of the following is TRUE about Client Components in Next.js?"
+  optionsJSON={`[
+    { "id": "a", "text": "They only render on the client-side browser.", "isCorrect": false },
+    { "id": "b", "text": "They are pre-rendered on the server (SSR) during the initial page load.", "isCorrect": true, "explanation": "Despite the name 'Client Component', Next.js pre-renders them on the server to generate the initial HTML, then hydrates them on the client for interactivity." },
+    { "id": "c", "text": "They cannot have Server Components as children under any circumstances.", "isCorrect": false },
+    { "id": "d", "text": "They can securely store API keys.", "isCorrect": false }
+  ]`}
+/>

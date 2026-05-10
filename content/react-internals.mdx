@@ -1,0 +1,86 @@
+---
+title: "React Internals"
+slug: "react-internals"
+order: 1
+icon: "⚛️"
+concept: "React uses a Fiber architecture for incremental rendering. The reconciliation algorithm (diffing) compares the current Fiber tree with a work-in-progress tree to compute the minimal set of DOM mutations. Each Fiber node represents a unit of work that can be paused, aborted, or reused."
+interviewScript: "React's rendering pipeline is built on the Fiber architecture introduced in React 16. When state changes, React doesn't immediately mutate the DOM. Instead, it creates a work-in-progress Fiber tree and performs reconciliation — a diffing process that walks both trees to determine the minimal set of changes. This is what enables features like concurrent rendering, where React can pause low-priority work to handle urgent updates first. The key insight is that Fiber turns the recursive, synchronous rendering of the old stack reconciler into an interruptible, incremental process."
+pitfalls:
+  - "Confusing Virtual DOM with Shadow DOM — they solve completely different problems"
+  - "Assuming React re-renders the entire app on every state change (it only re-renders the subtree)"
+  - "Not understanding that reconciliation uses keys to track identity, leading to subtle bugs when keys are missing or unstable"
+  - "Thinking that React.memo prevents all re-renders — it only prevents re-renders when props haven't changed"
+exercises:
+  1-day:
+    - "Explain the difference between the Virtual DOM and the real DOM in 2 minutes"
+    - "Describe why keys are important in lists"
+  3-day:
+    - "Trace the lifecycle of a setState call from trigger to DOM paint"
+    - "Explain how React batches multiple state updates and when it doesn't"
+    - "Describe a scenario where missing keys cause a bug"
+  7-day:
+    - "Build a minimal Virtual DOM diffing algorithm from scratch"
+    - "Implement a simplified Fiber-like scheduler with priority lanes"
+    - "Create a custom reconciler using react-reconciler package"
+---
+
+## Visual Concept: Stack vs Fiber Architecture
+
+```text
+ ┌─────────────────────────┐       ┌─────────────────────────┐
+ │   STACK RECONCILER      │       │   FIBER RECONCILER      │
+ │   (Synchronous)         │       │   (Asynchronous)        │
+ └───────────┬─────────────┘       └───────────┬─────────────┘
+             │                                 │
+     [App Component]                  [App Component] (Priority: Low)
+             │                                 │
+     [List Component]                 [List Component] (Paused)
+             │                                 │
+ [Item 1] [Item 2] [Item 3]       [Item 1] [Item 2] ...yields to Main Thread
+             │                                 │
+     (Cannot pause.               (Browser handles user input, then
+      Blocks Main Thread)          React resumes rendering Item 3)
+```
+
+## Deep Dive: React Fiber Architecture
+
+The Fiber architecture is the backbone of modern React. Understanding it deeply separates senior engineers from those who just use the framework.
+
+### The Fiber Tree
+
+Every React element corresponds to a Fiber node. A Fiber is a JavaScript object that contains information about:
+
+- The **component type** (function, class, host element)
+- The **props** and **state**
+- Pointers to its **parent**, **child**, and **sibling** Fibers
+- **Effect tags** describing what DOM operations are needed
+
+### Reconciliation Algorithm
+
+When you call `setState`, React:
+
+1. **Schedules** an update on the Fiber
+2. **Begins work** from the root, walking down the tree
+3. **Diffs** each Fiber against its previous version
+4. **Collects effects** (insertions, updates, deletions)
+5. **Commits** all effects to the DOM in a single batch
+
+### Concurrent Mode
+
+Fiber enables **time-slicing**: React can split rendering work across multiple frames. This prevents long renders from blocking the main thread, keeping the UI responsive.
+
+<InteractiveEditor
+  filesJSON={`{
+    "/App.js": "import { useState, useTransition } from 'react';\\n\\nexport default function App() {\\n  const [isPending, startTransition] = useTransition();\\n  const [query, setQuery] = useState('');\\n  const [results, setResults] = useState([]);\\n\\n  function handleChange(e) {\\n    const value = e.target.value;\\n    // Urgent: update input immediately\\n    setQuery(value);\\n    \\n    // Non-urgent: delay the heavy computation\\n    startTransition(() => {\\n      const newResults = [];\\n      for (let i = 0; i < 5000; i++) {\\n        newResults.push(value + ' item ' + i);\\n      }\\n      setResults(newResults);\\n    });\\n  }\\n\\n  return (\\n    <div style={{ padding: 20 }}>\\n      <h3>Concurrent Mode Demo</h3>\\n      <input \\n        value={query} \\n        onChange={handleChange} \\n        placeholder=\\"Type to search...\\"\\n        style={{ padding: 8, fontSize: 16, width: '100%' }}\\n      />\\n      {isPending && <p>Loading results...</p>}\\n      <ul style={{ height: 300, overflow: 'auto', marginTop: 10 }}>\\n        {results.map((r, i) => <li key={i}>{r}</li>)}\\n      </ul>\\n    </div>\\n  );\\n}"
+  }`}
+/>
+
+<Quiz
+  question="Why does React use the Fiber architecture instead of the stack reconciler?"
+  options={[
+    { "id": "a", "text": "To make the Virtual DOM smaller in memory.", "isCorrect": false },
+    { "id": "b", "text": "To enable incremental, interruptible rendering.", "isCorrect": true, "explanation": "Fiber turns the synchronous, recursive rendering of the old stack reconciler into an interruptible process, allowing React to pause low-priority work." },
+    { "id": "c", "text": "To completely replace the Real DOM.", "isCorrect": false },
+    { "id": "d", "text": "To automatically memoize all components.", "isCorrect": false }
+  ]}
+/>

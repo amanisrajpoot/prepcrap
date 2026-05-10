@@ -1,0 +1,67 @@
+---
+title: "State Management"
+slug: "state-management"
+order: 3
+icon: "🧠"
+concept: "State management is about choosing the right tool for the right scope. Local state (useState/useReducer) for component-level concerns, context for dependency injection across a subtree, and external stores (Zustand, Jotai, Redux) for truly global, frequently-updated state. The key principle: keep state as close to where it's used as possible."
+interviewScript: "My approach to state management starts with the principle of colocation — state should live as close to where it's consumed as possible. For component-specific UI state like form inputs or toggles, useState is perfect. For complex state logic with multiple sub-values, useReducer gives you predictable transitions. React Context excels at dependency injection — things like themes, auth, or locale that rarely change but need to be widely accessible. For server state, I reach for TanStack Query which handles caching, deduplication, and background refetching. Only when I have truly global, frequently-updated client state do I bring in Zustand or Jotai — and even then, I use atomic state to minimize re-renders."
+pitfalls:
+  - "Putting everything in global state (Redux syndrome) — most state is local"
+  - "Using Context for frequently-changing values causes unnecessary re-renders of all consumers"
+  - "Confusing server state with client state — they have fundamentally different caching and synchronization needs"
+  - "Not leveraging React 18's automatic batching — manually batching setState calls is no longer necessary"
+exercises:
+  1-day:
+    - "Explain when you would use useState vs useReducer vs Context"
+    - "Describe the difference between server state and client state"
+  3-day:
+    - "Refactor a component that over-uses Context into a more efficient pattern"
+    - "Implement a custom useReducer with middleware support"
+    - "Compare the re-render behavior of Context vs Zustand for a counter app"
+  7-day:
+    - "Build a minimal state management library inspired by Zustand"
+    - "Implement a reactive signals system similar to Solid.js signals"
+    - "Create a state machine library using useReducer that supports hierarchical states"
+---
+
+## Deep Dive: State Management Patterns
+
+The state management landscape has evolved dramatically. Understanding the tradeoffs between approaches is a senior-level skill.
+
+### The State Spectrum
+
+```
+Local ←————————————————————————————→ Global
+useState → useReducer → Context → Zustand/Jotai → Redux
+```
+
+### Server State vs Client State
+
+This is the most important distinction modern React developers must make:
+
+| | Server State | Client State |
+|---|---|---|
+| **Source of truth** | External database/API | In-memory |
+| **Caching** | Stale-while-revalidate | Always fresh |
+| **Sync** | Async, may fail | Synchronous |
+| **Tool** | TanStack Query, SWR | useState, Zustand |
+
+### Zustand: Modern Global State
+
+<InteractiveEditor
+  template="react"
+  filesJSON={`{
+    "/App.js": "import { create } from 'zustand';\\n\\nconst useStore = create((set) => ({\\n  count: 0,\\n  increment: () => set((state) => ({ count: state.count + 1 })),\\n}));\\n\\nfunction CounterDisplay() {\\n  // Selective subscription prevents unnecessary re-renders\\n  const count = useStore((state) => state.count);\\n  console.log(\\"CounterDisplay rendered\\");\\n  return <div>Count: {count}</div>;\\n}\\n\\nfunction Controls() {\\n  const increment = useStore((state) => state.increment);\\n  console.log(\\"Controls rendered\\");\\n  return <button onClick={increment} style={{marginTop: 10}}>Increment</button>;\\n}\\n\\nexport default function App() {\\n  console.log(\\"App rendered\\");\\n  return (\\n    <div style={{ padding: 20 }}>\\n      <h3>Zustand Demo</h3>\\n      <CounterDisplay />\\n      <Controls />\\n      <p style={{ marginTop: 10, fontSize: 12, color: 'gray' }}>\\n        Check the console! Only CounterDisplay re-renders when the count changes, not the parent App or Controls.\\n      </p>\\n    </div>\\n  );\\n}",
+    "/package.json": "{\\n  \\"dependencies\\": {\\n    \\"react\\": \\"^18.0.0\\",\\n    \\"react-dom\\": \\"^18.0.0\\",\\n    \\"zustand\\": \\"^4.4.1\\"\\n  }\\n}"
+  }`}
+/>
+
+<Quiz
+  question="Which of the following is the primary advantage of client state libraries like Zustand over React Context for frequently changing global state?"
+  optionsJSON={`[
+    { "id": "a", "text": "They use less memory.", "isCorrect": false },
+    { "id": "b", "text": "They allow selective subscriptions, preventing unnecessary re-renders of all consumers.", "isCorrect": true, "explanation": "When a value in Context changes, ALL components consuming that Context re-render. Libraries like Zustand allow you to subscribe only to the specific slice of state a component needs." },
+    { "id": "c", "text": "They automatically persist state to localStorage.", "isCorrect": false },
+    { "id": "d", "text": "They automatically sync with server state.", "isCorrect": false }
+  ]`}
+/>

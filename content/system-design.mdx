@@ -1,0 +1,63 @@
+---
+title: "System Design & Architecture"
+slug: "system-design"
+order: 11
+icon: "📐"
+concept: "System Design is about architecting scalable, reliable, and maintainable systems. Key concepts include Load Balancing, Caching, Message Queues, Microservices vs Monoliths, and understanding the CAP Theorem (Consistency, Availability, Partition Tolerance)."
+interviewScript: "When approaching a system design interview, I always start by clarifying requirements and estimating scale. My go-to architecture for high scale relies on horizontal scaling behind a Load Balancer. I heavily utilize caching (Redis/Memcached) to protect the database from read-heavy operations. If a process is slow or asynchronous, I decouple it using a message queue (like Kafka or SQS) to prevent blocking the main request cycle. Finally, I always address the CAP theorem—in distributed systems, network partitions will happen, so we must choose between strict Consistency (like banking) or high Availability (like a social feed)."
+pitfalls:
+  - "Designing a complex microservice architecture for an MVP that could easily be a monolith."
+  - "Forgetting to identify single points of failure (SPOF) in the design."
+  - "Applying a 'silver bullet' technology (e.g., Kafka) without justifying why it's needed over a simpler solution (e.g., SQS or Redis Pub/Sub)."
+  - "Ignoring rate limiting and API gateway security for public-facing services."
+exercises:
+  1-day:
+    - "Explain the CAP Theorem and give an example of an AP system vs a CP system."
+    - "What is the difference between horizontal and vertical scaling?"
+  3-day:
+    - "Design a URL shortener service (like Bitly). Focus on the database schema and caching."
+    - "Explain the difference between a write-through cache and a write-behind cache."
+    - "Describe consistent hashing and why it's useful for load balancers."
+  7-day:
+    - "Design a real-time chat application (like WhatsApp). Focus on WebSocket connection management."
+    - "Architect a highly available, globally distributed leaderboard system for a popular video game."
+    - "Explain how you would handle distributed transactions across multiple microservices using the Saga pattern."
+---
+
+## Visual Concept: High-Level Web Architecture
+
+```text
+       [Users]
+          │
+  (DNS & CDN Layer)
+   [Route53 / CloudFront]
+          │
+          ▼
+   [Load Balancer] ──────────────┐
+          │                      │
+   ┌──────┴──────┐         [Rate Limiter]
+   ▼             ▼
+ [App          [App
+ Server 1]     Server 2] ────> [Message Queue] ──> [Worker Nodes]
+   │             │
+   │             │             [Cache (Redis)]
+   └──────┬──────┘                   ▲
+          │                          │
+          ▼                          ▼
+    [Primary DB] <────────────> [Read Replicas]
+    (Write Operations)         (Read Operations)
+```
+
+## Deep Dive: The CAP Theorem
+
+The CAP theorem states that a distributed data store can only simultaneously provide two of the following three guarantees: Consistency, Availability, and Partition Tolerance.
+
+<Quiz
+  question="Since network partitions (P) are inevitable in real-world distributed systems, you must choose between Consistency (C) and Availability (A). Which of the following systems strongly prioritizes Consistency over Availability?"
+  optionsJSON={`[
+    { "id": "a", "text": "A social media feed (e.g., Twitter).", "isCorrect": false },
+    { "id": "b", "text": "A distributed caching layer.", "isCorrect": false },
+    { "id": "c", "text": "A banking ledger processing financial transactions.", "isCorrect": true, "explanation": "Banks cannot afford inconsistent balances. They will reject a transaction (sacrificing Availability) if they cannot guarantee that the ledger is perfectly Consistent across all nodes." },
+    { "id": "d", "text": "A DNS resolution system.", "isCorrect": false }
+  ]`}
+/>

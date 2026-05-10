@@ -1,0 +1,58 @@
+---
+title: "Performance Optimization"
+slug: "performance-optimization"
+order: 2
+icon: "🚀"
+concept: "Frontend performance spans three pillars: reducing bundle size (code splitting, tree shaking), optimizing rendering (memoization, virtualization), and improving perceived performance (skeleton screens, optimistic updates). The critical rendering path — HTML parsing, CSSOM construction, layout, paint, composite — is the foundation of all web performance."
+interviewScript: "When discussing frontend performance, I frame it around three axes. First, delivery — minimizing what we ship via code splitting with dynamic imports, tree shaking dead code, and aggressive caching strategies. Second, runtime rendering — using React.memo, useMemo, and useCallback strategically (not everywhere), virtualizing long lists, and avoiding layout thrashing. Third, perceived performance — making the app feel fast through skeleton screens, optimistic updates, and progressive loading. I always start with measurement using Lighthouse, Web Vitals, and the React Profiler before optimizing."
+pitfalls:
+  - "Premature optimization — memoizing everything without measuring first actually hurts performance"
+  - "Not understanding that useMemo and useCallback have their own cost (memory + comparison overhead)"
+  - "Ignoring CLS (Cumulative Layout Shift) — one of the most impactful Core Web Vitals"
+  - "Over-relying on client-side rendering when SSR/SSG would dramatically improve TTFB"
+exercises:
+  1-day:
+    - "List the 3 Core Web Vitals and explain what each measures"
+    - "Explain when to use React.memo vs useMemo vs useCallback"
+  3-day:
+    - "Profile a slow React component using React DevTools Profiler and identify the bottleneck"
+    - "Implement code splitting with React.lazy and Suspense for a multi-route app"
+    - "Explain the difference between LCP, FID/INP, and CLS with real examples"
+  7-day:
+    - "Build a virtualized list component from scratch (no library)"
+    - "Implement an intersection observer-based lazy loading system"
+    - "Create a performance monitoring dashboard that tracks Core Web Vitals in production"
+---
+
+## Deep Dive: Performance Optimization
+
+Performance is not an afterthought — it's a feature. Senior engineers build performance-aware applications from day one.
+
+### The Critical Rendering Path
+
+Understanding how the browser renders content is fundamental:
+
+1. **Parse HTML** → Build the DOM tree
+2. **Parse CSS** → Build the CSSOM tree  
+3. **Combine** → Create the Render tree
+4. **Layout** → Calculate geometry
+5. **Paint** → Fill in pixels
+6. **Composite** → Layer composition
+
+### React-Specific Optimization
+
+<InteractiveEditor
+  filesJSON={`{
+    "/App.js": "import { useState, useMemo } from 'react';\\n\\nfunction complexSort(data) {\\n  console.log(\\"Sorting data...\\");\\n  const start = performance.now();\\n  while(performance.now() - start < 100) {} // fake slow sort\\n  return [...data].sort((a, b) => b - a);\\n}\\n\\nexport default function App() {\\n  const [count, setCount] = useState(0);\\n  const [data, setData] = useState([5, 1, 9, 3, 7]);\\n\\n  // Try changing useMemo to just calling complexSort(data)\\n  const sortedData = useMemo(() => complexSort(data), [data]);\\n\\n  return (\\n    <div style={{ padding: 20 }}>\\n      <h3>Performance Optimization</h3>\\n      <button onClick={() => setCount(c => c + 1)}>\\n        Re-render (Count: {count})\\n      </button>\\n      <div style={{ marginTop: 10 }}>\\n        Sorted: {sortedData.join(', ')}\\n      </div>\\n      <p style={{ marginTop: 10, fontSize: 12, color: 'gray' }}>\\n        Check the console! If memoized correctly, clicking the button won't log \\"Sorting data...\\".\\n      </p>\\n    </div>\\n  );\\n}"
+  }`}
+/>
+
+<Quiz
+  question="Which of the following is an example of optimizing perceived performance rather than runtime rendering?"
+  optionsJSON={`[
+    { "id": "a", "text": "Using React.memo to prevent re-renders.", "isCorrect": false },
+    { "id": "b", "text": "Tree shaking unused dependencies from the bundle.", "isCorrect": false },
+    { "id": "c", "text": "Displaying a skeleton screen while data loads.", "isCorrect": true, "explanation": "Skeleton screens, optimistic updates, and loading spinners improve perceived performance by making the app feel responsive, even if the total load time is the same." },
+    { "id": "d", "text": "Virtualizing a long list of items.", "isCorrect": false }
+  ]`}
+/>

@@ -1,0 +1,68 @@
+---
+title: "Advanced JavaScript Core"
+slug: "javascript-core"
+order: 4
+icon: "🟨"
+concept: "JavaScript is single-threaded but achieves concurrency through the Event Loop. Understanding how the Call Stack, Web APIs, Microtask Queue (Promises), and Macrotask Queue (setTimeout) interact is crucial. Furthermore, concepts like Closures (functions retaining access to their lexical scope) and Prototypal Inheritance form the bedrock of the language."
+interviewScript: "When explaining JavaScript's concurrency model, I emphasize that JS itself is synchronous and single-threaded. Concurrency is handled by the browser or Node.js environment. When an async operation like a fetch request occurs, it's handed off to Web APIs. Once complete, its callback is pushed to a queue. The Event Loop constantly checks if the Call Stack is empty; if it is, it pushes the oldest task from the queue onto the stack. Crucially, Microtasks (like Promise callbacks) have higher priority than Macrotasks (like setTimeout). This means the Microtask queue must be completely emptied before the next Macrotask runs."
+pitfalls:
+  - "Thinking Promises run in parallel in JavaScript (they run concurrently, not in parallel, unless using Web Workers)"
+  - "Misunderstanding the 'this' keyword binding in arrow functions vs regular functions"
+  - "Creating memory leaks by unintentionally keeping references to large objects inside closures"
+  - "Not knowing the execution order of nested setTimeouts and Promises"
+exercises:
+  1-day:
+    - "Explain the difference between let, const, and var regarding hoisting and block scope."
+    - "Describe how a Closure works in 2 sentences."
+  3-day:
+    - "Predict the exact console.log output order of a mixed setTimeout/Promise code block."
+    - "Implement your own version of Function.prototype.bind."
+    - "Explain the difference between __proto__ and prototype."
+  7-day:
+    - "Build a custom Promise implementation from scratch meeting the Promises/A+ specification."
+    - "Create a memory leak using closures and then fix it."
+    - "Implement a deep clone function that handles circular references."
+---
+
+## Visual Concept: The Event Loop Architecture
+
+```text
+ ┌────────────────┐       ┌─────────────────┐
+ │   Call Stack   │       │     Web APIs    │
+ │                │       │   (setTimeout,  │
+ │  [ console() ] │ ────> │    fetch, DOM)  │
+ │  [ main()    ] │       └────────┬────────┘
+ └───────▲────────┘                │
+         │                         │ pushes to
+         │                         ▼
+         │               ┌───────────────────┐
+         │<──────────────│ Macrotask Queue   │
+         │  Event Loop   │ [Timer callback]  │
+         │  (checks if   └───────────────────┘
+         │  stack empty)           
+         │               ┌───────────────────┐
+         └───────────────│ Microtask Queue   │<── Highest Priority
+                         │ [Promise resolve] │
+                         └───────────────────┘
+```
+
+## Deep Dive: The Event Loop & Concurrency
+
+The most common senior interview question involves predicting the output of asynchronous code.
+
+<InteractiveEditor
+  template="vanilla"
+  filesJSON={`{
+    "/index.js": "console.log('1. Script start');\\n\\nsetTimeout(() => {\\n  console.log('4. setTimeout (Macrotask)');\\n}, 0);\\n\\nPromise.resolve()\\n  .then(() => {\\n    console.log('3. Promise 1 (Microtask)');\\n  })\\n  .then(() => {\\n    console.log('3.1 Promise 2 (Microtask)');\\n  });\\n\\nconsole.log('2. Script end');\\n\\n// Run this and check the console output below!\\n"
+  }`}
+/>
+
+<Quiz
+  question="If you have an infinite loop running synchronously in the Call Stack, what happens to a resolved Promise waiting in the Microtask queue?"
+  optionsJSON={`[
+    { "id": "a", "text": "It will execute immediately, interrupting the infinite loop.", "isCorrect": false },
+    { "id": "b", "text": "It will execute after 1 millisecond.", "isCorrect": false },
+    { "id": "c", "text": "It will never execute because the Event Loop cannot move items to the Call Stack until the Call Stack is empty.", "isCorrect": true, "explanation": "The Event Loop only moves tasks from the queues to the Call Stack when the Call Stack is entirely empty. A synchronous infinite loop blocks the stack forever." },
+    { "id": "d", "text": "It throws a StackOverflow error.", "isCorrect": false }
+  ]`}
+/>

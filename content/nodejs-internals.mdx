@@ -1,0 +1,74 @@
+---
+title: "Node.js Internals"
+slug: "nodejs-internals"
+order: 6
+icon: "🟩"
+concept: "Node.js is a JavaScript runtime built on Chrome's V8 engine. It uses an event-driven, non-blocking I/O model making it lightweight and efficient. The core of Node.js is Libuv, a C library that implements the multi-platform asynchronous I/O and the Event Loop, allowing Node to handle thousands of concurrent connections on a single thread."
+interviewScript: "Node.js isn't just JavaScript on the server; it's a binding between V8 and Libuv. When Node encounters an asynchronous I/O task, like reading a file or making a network request, it offloads that work to the operating system via Libuv. Libuv maintains a thread pool (default of 4 threads) for tasks the OS can't handle asynchronously. Once the OS or thread pool finishes the task, the callback is queued in the Event Loop. The Event Loop in Node has specific phases: Timers, Pending Callbacks, Idle/Prepare, Poll, Check (setImmediate), and Close Callbacks. Understanding this exact order is critical for debugging race conditions."
+pitfalls:
+  - "Believing Node.js is completely single-threaded (Libuv has a hidden thread pool for file I/O and crypto)."
+  - "Blocking the Event Loop with heavy synchronous CPU tasks (like parsing massive JSON or regex processing)."
+  - "Confusing process.nextTick() with setTimeout() or setImmediate(). nextTick executes BEFORE the event loop continues to the next phase."
+  - "Loading massive files into memory at once instead of using Streams."
+exercises:
+  1-day:
+    - "Explain the role of V8 vs Libuv in Node.js."
+    - "What is the difference between synchronous and asynchronous I/O?"
+  3-day:
+    - "List the phases of the Node.js Event Loop in order."
+    - "Write a script demonstrating the execution order of setImmediate, setTimeout, and process.nextTick."
+    - "Implement a basic HTTP server using the built-in 'http' module."
+  7-day:
+    - "Build a highly concurrent file processor using Worker Threads to avoid blocking the main thread."
+    - "Implement a custom Writable and Readable Stream to transform a large CSV file without exceeding RAM limits."
+    - "Write a cluster module script that forks workers based on os.cpus()."
+---
+
+## Visual Concept: Node.js Architecture
+
+```text
+ ┌──────────────────────────────────────────┐
+ │               Node.js Core               │
+ │  ┌──────────────┐      ┌──────────────┐  │
+ │  │  V8 Engine   │      │  Node APIs   │  │
+ │  │ (Executes JS)│      │(fs, http, os)│  │
+ │  └───────┬──────┘      └──────┬───────┘  │
+ │          │                    │          │
+ │  ┌───────▼────────────────────▼───────┐  │
+ │  │               C++ Bindings         │  │
+ │  └──────────────────┬─────────────────┘  │
+ │                     │                    │
+ │  ┌──────────────────▼─────────────────┐  │
+ │  │                Libuv               │  │
+ │  │  ┌─────────────────────────────┐   │  │
+ │  │  │         Event Loop          │   │  │
+ │  │  └──────────────┬──────────────┘   │  │
+ │  │                 │                  │  │
+ │  │  ┌──────────────▼──────────────┐   │  │
+ │  │  │      Worker Thread Pool     │   │  │
+ │  │  │   (Handles File I/O, DNS)   │   │  │
+ │  │  └─────────────────────────────┘   │  │
+ │  └────────────────────────────────────┘  │
+ └──────────────────────────────────────────┘
+```
+
+## Deep Dive: The Node.js Event Loop
+
+The Node.js event loop is more complex than the browser's event loop. It has distinct phases.
+
+<InteractiveEditor
+  template="vanilla"
+  filesJSON={`{
+    "/index.js": "console.log('1. Start');\\n\\n// setTimeout goes to the Timers phase\\nsetTimeout(() => console.log('5. setTimeout'), 0);\\n\\n// Promise goes to the Microtask queue (executes between phases)\\nPromise.resolve().then(() => console.log('3. Promise'));\\n\\n// process.nextTick goes to the nextTick queue (executes BEFORE Promises!)\\n// Note: Sandpack runs in browser, so process.nextTick isn't fully native here, \\n// but in real Node.js, nextTick beats Promises.\\nif (typeof process !== 'undefined' && process.nextTick) {\\n  process.nextTick(() => console.log('2. nextTick'));\\n}\\n\\nconsole.log('4. End');\\n\\n/* Expected Node.js Output:\\n   1. Start\\n   4. End\\n   2. nextTick\\n   3. Promise\\n   5. setTimeout\\n*/"
+  }`}
+/>
+
+<Quiz
+  question="If you need to process a 5GB video file in a Node.js application running on a server with 1GB of RAM, what is the best approach?"
+  optionsJSON={`[
+    { "id": "a", "text": "Increase the Node.js memory limit using --max-old-space-size.", "isCorrect": false },
+    { "id": "b", "text": "Use fs.readFile() asynchronously to prevent blocking the event loop.", "isCorrect": false },
+    { "id": "c", "text": "Use Node.js Streams (fs.createReadStream) to process the file in small chunks.", "isCorrect": true, "explanation": "Streams allow you to read and process data piece by piece without keeping the entire payload in memory, which is essential for files larger than available RAM." },
+    { "id": "d", "text": "Use child_process to handle the file in a separate thread.", "isCorrect": false }
+  ]`}
+/>

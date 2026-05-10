@@ -1,0 +1,59 @@
+---
+title: "Web Security Fundamentals"
+slug: "web-security"
+order: 13
+icon: "🔒"
+concept: "Web security involves protecting applications from malicious attacks. A senior full-stack developer must deeply understand the OWASP Top 10. Core concepts include preventing XSS (Cross-Site Scripting), CSRF (Cross-Site Request Forgery), SQL Injection, configuring CORS securely, and understanding the nuances of Authentication (JWT vs Session Cookies)."
+interviewScript: "Security is non-negotiable and must be built-in, not bolted on. I sanitize all user input to prevent SQL injection and properly escape output to prevent XSS. For API authentication, if I'm using an SPA and a decoupled backend, I often use JWTs, but I never store them in localStorage due to XSS vulnerability; I use HTTPOnly, Secure cookies. To protect those state-changing cookie requests, I implement Anti-CSRF tokens or rely on the SameSite cookie attribute. I also ensure strict CORS policies are enforced on the server to only allow trusted origins."
+pitfalls:
+  - "Storing JWT access tokens in browser `localStorage`, making them easily accessible to any malicious JavaScript (XSS)."
+  - "Configuring CORS with `Access-Control-Allow-Origin: *` while allowing credentials, completely breaking security."
+  - "Concatenating user input directly into SQL query strings instead of using parameterized queries."
+  - "Trusting client-side validation for security. All validation must happen on the server."
+exercises:
+  1-day:
+    - "Explain the difference between XSS and CSRF."
+    - "What is an SQL Injection and how do you prevent it?"
+  3-day:
+    - "Describe the difference between Stored XSS and Reflected XSS."
+    - "Explain how the 'SameSite' cookie attribute helps mitigate CSRF attacks."
+    - "Why is an HTTPOnly cookie more secure for storing session IDs?"
+  7-day:
+    - "Implement an OAuth 2.0 Authorization Code flow with PKCE."
+    - "Write a Content Security Policy (CSP) header to strictly limit script execution sources."
+    - "Demonstrate how a timing attack works against a password comparison algorithm and how to fix it."
+---
+
+## Visual Concept: JWT vs Session Auth
+
+```text
+ ┌───────────────────────┐         ┌───────────────────────┐
+ │   SESSION COOKIES     │         │ JSON WEB TOKENS (JWT) │
+ └───────────┬───────────┘         └───────────┬───────────┘
+             │                                 │
+ [Server generates Session ID]     [Server signs Payload]
+ [Stores ID in Server Memory]      [No Server Memory used]
+             │                                 │
+ [Sends ID in HTTPOnly Cookie]     [Sends JWT to Client]
+             │                                 │
+ [Client sends Cookie on req]      [Client sends JWT in Header]
+             │                                 │
+ [Server looks up Session ID]      [Server verifies Signature]
+             │                                 │
+ * Stateful (harder to scale)      * Stateless (easy to scale)
+ * Easy to invalidate/logout       * Hard to invalidate early
+```
+
+## Deep Dive: Cross-Site Scripting (XSS)
+
+XSS occurs when an attacker injects malicious scripts into trusted websites.
+
+<Quiz
+  question="You are building a React application. You receive a rich-text HTML string from an external API that you need to display. You use the 'dangerouslySetInnerHTML' prop. What is the most critical step you MUST take before rendering?"
+  optionsJSON={`[
+    { "id": "a", "text": "Encode the HTML string to Base64.", "isCorrect": false },
+    { "id": "b", "text": "Sanitize the HTML string on the client-side using a library like DOMPurify.", "isCorrect": true, "explanation": "Before using dangerouslySetInnerHTML, you must sanitize the input to strip out any malicious <script> tags or harmful attributes (like onload=) to prevent XSS attacks." },
+    { "id": "c", "text": "Convert the HTML to Markdown.", "isCorrect": false },
+    { "id": "d", "text": "Set the Content-Type header to text/plain.", "isCorrect": false }
+  ]`}
+/>

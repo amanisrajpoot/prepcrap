@@ -1,0 +1,64 @@
+---
+title: "DevOps & Docker Internals"
+slug: "devops-docker"
+order: 15
+icon: "🐳"
+concept: "DevOps bridges the gap between development and operations. A senior engineer must understand how their code is packaged, deployed, and monitored. This requires deep knowledge of Containerization (Docker), Orchestration (Kubernetes/ECS), and Continuous Integration/Continuous Deployment (CI/CD) pipelines."
+interviewScript: "I believe developers should own their code in production. This means writing my own Dockerfiles. When building Docker images, I focus on layer caching and multi-stage builds to keep the final image as small and secure as possible. I use CI/CD pipelines (like GitHub Actions) to automate running tests, linting, and building the image upon every pull request. Understanding Docker internals—like Linux namespaces for isolation and cgroups for resource limiting—is crucial for debugging container performance issues in a production cluster."
+pitfalls:
+  - "Creating massive Docker images by not utilizing multi-stage builds."
+  - "Running applications inside Docker containers as the 'root' user (a major security risk)."
+  - "Including sensitive secrets (like API keys) directly in the Dockerfile instead of injecting them at runtime via environment variables."
+  - "Deploying code to production without automated tests passing in the CI pipeline."
+exercises:
+  1-day:
+    - "Explain the difference between a Virtual Machine (VM) and a Docker Container."
+    - "What is a CI/CD pipeline?"
+  3-day:
+    - "Write an optimized, multi-stage Dockerfile for a Node.js/Next.js application."
+    - "Explain how Docker Layer Caching works and how to optimize your Dockerfile instruction order."
+    - "What are Linux Namespaces and Cgroups in the context of Docker?"
+  7-day:
+    - "Set up a complete GitHub Actions workflow that runs tests, builds a Docker image, and pushes it to AWS ECR."
+    - "Explain the architecture of Kubernetes (Master node, Kubelet, Pods) at a high level."
+    - "Describe blue-green deployments vs canary releases."
+---
+
+## Visual Concept: VMs vs Containers
+
+```text
+ ┌────────────────────────┐      ┌────────────────────────┐
+ │ VIRTUAL MACHINES (VMs) │      │ DOCKER CONTAINERS      │
+ │                        │      │                        │
+ │  ┌─────┐      ┌─────┐  │      │  ┌─────┐      ┌─────┐  │
+ │  │App A│      │App B│  │      │  │App A│      │App B│  │
+ │  ├─────┤      ├─────┤  │      │  ├─────┤      ├─────┤  │
+ │  │Bins/│      │Bins/│  │      │  │Bins/│      │Bins/│  │
+ │  │Libs │      │Libs │  │      │  │Libs │      │Libs │  │
+ │  ├─────┤      ├─────┤  │      │  └─────┘      └─────┘  │
+ │  │Guest│      │Guest│  │      │            ▲           │
+ │  │ OS  │      │ OS  │  │      │            │           │
+ │  └─────┘      └─────┘  │      │  ┌─────────▼────────┐  │
+ │            ▲           │      │  │   Docker Engine  │  │
+ │  ┌─────────▼────────┐  │      │  └─────────┬────────┘  │
+ │  │    Hypervisor    │  │      │            │           │
+ │  └─────────┬────────┘  │      │  ┌─────────▼────────┐  │
+ │  ┌─────────▼────────┐  │      │  │      Host OS     │  │
+ │  │   Infrastructure │  │      │  └──────────────────┘  │
+ │  └──────────────────┘  │      │                        │
+ └────────────────────────┘      └────────────────────────┘
+```
+
+## Deep Dive: Multi-Stage Builds
+
+A multi-stage build allows you to use a heavy image with all compilation tools to build your app, but only copy the final compiled artifact into a tiny, secure runtime image.
+
+<Quiz
+  question="Why is it a best practice to run 'npm ci' or 'npm install' BEFORE copying the rest of your application source code into the Docker image?"
+  optionsJSON={`[
+    { "id": "a", "text": "Because Docker requires package.json to be the first file in the directory.", "isCorrect": false },
+    { "id": "b", "text": "To leverage Docker layer caching. If your application code changes but your dependencies don't, Docker can reuse the cached 'npm install' layer, saving massive amounts of build time.", "isCorrect": true, "explanation": "Docker caches each instruction. By copying package.json and running install FIRST, that layer is cached. If you copy all source code first, any change to a single line of code invalidates the cache for the 'npm install' step." },
+    { "id": "c", "text": "Because 'npm install' will delete existing files if run after.", "isCorrect": false },
+    { "id": "d", "text": "It is not a best practice; order does not matter in a Dockerfile.", "isCorrect": false }
+  ]`}
+/>

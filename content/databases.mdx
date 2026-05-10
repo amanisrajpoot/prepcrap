@@ -1,0 +1,56 @@
+---
+title: "Database Internals"
+slug: "databases"
+order: 12
+icon: "🗄️"
+concept: "Databases are the core of any application. Understanding relational databases (SQL) involves ACID properties, Normalization, B-Tree Indexing, and Joins. NoSQL databases prioritize horizontal scalability and flexibility over strict consistency (BASE properties). Redis provides lightning-fast in-memory data structures."
+interviewScript: "Choosing a database depends entirely on the data's shape and access patterns. For structured data with complex relationships and strict integrity requirements, I default to PostgreSQL. To optimize SQL queries, I ensure proper B-Tree indexes are created, avoiding full table scans. If the data is unstructured, highly volatile, or requires massive horizontal scaling, I might opt for a NoSQL document store like MongoDB. For high-throughput key-value lookups, leaderboards, or session management, Redis is my go-to in-memory layer."
+pitfalls:
+  - "Over-indexing a SQL table, which speeds up reads but significantly slows down INSERT/UPDATE operations."
+  - "Using a NoSQL database purely because it's 'schemaless', then ending up writing application-level schema validation anyway."
+  - "Not understanding the N+1 query problem in ORMs, leading to database overload."
+  - "Running complex aggregate analytics queries on a production transactional database (OLTP) instead of a data warehouse (OLAP)."
+exercises:
+  1-day:
+    - "Define the ACID properties of a relational database."
+    - "What is the primary difference between a clustered and non-clustered index?"
+  3-day:
+    - "Explain the N+1 query problem and how to solve it using JOINs or a DataLoader."
+    - "Write a SQL query that uses an INNER JOIN and a GROUP BY clause to aggregate sales data."
+    - "Describe the difference between horizontal sharding and vertical partitioning."
+  7-day:
+    - "Explain how a B-Tree index works under the hood when searching for a record."
+    - "Design a NoSQL document schema for a multi-tenant blog platform."
+    - "Implement an optimistic concurrency control mechanism using a 'version' column to prevent lost updates."
+---
+
+## Visual Concept: SQL vs NoSQL Scaling
+
+```text
+ ┌──────────────────────────┐    ┌──────────────────────────┐
+ │ VERTICAL SCALING (SQL)   │    │ HORIZONTAL SCALING (NoSQL│
+ │                          │    │                          │
+ │      [ Server ]          │    │    [ Node 1 ] (A-H)      │
+ │    More CPU/RAM/SSD      │    │           +              │
+ │                          │    │    [ Node 2 ] (I-P)      │
+ │  * Hard hardware limit   │    │           +              │
+ │  * Expensive at scale    │    │    [ Node 3 ] (Q-Z)      │
+ │  * Maintains strict ACID │    │                          │
+ │                          │    │  * Infinite scalability  │
+ │                          │    │  * Data is partitioned   │
+ └──────────────────────────┘    └──────────────────────────┘
+```
+
+## Deep Dive: Indexing and B-Trees
+
+Adding an index is the fastest way to speed up a slow query, but it comes with a cost.
+
+<Quiz
+  question="You have a 'users' table with 10 million rows. You frequently query 'SELECT * FROM users WHERE status = 'active''. The 'status' column only has two possible values: 'active' and 'inactive'. Should you create a B-Tree index on the 'status' column?"
+  optionsJSON={`[
+    { "id": "a", "text": "Yes, an index will always speed up queries with a WHERE clause.", "isCorrect": false },
+    { "id": "b", "text": "No, because the column has low cardinality.", "isCorrect": true, "explanation": "B-Tree indexes are inefficient for low cardinality columns (columns with very few distinct values, like booleans or enums). The database optimizer will likely ignore the index and perform a full table scan anyway, making the index a waste of memory and a drag on inserts." },
+    { "id": "c", "text": "Yes, but only if it's a clustered index.", "isCorrect": false },
+    { "id": "d", "text": "No, you should use a NoSQL database instead.", "isCorrect": false }
+  ]`}
+/>

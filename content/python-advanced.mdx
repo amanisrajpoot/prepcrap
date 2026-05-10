@@ -1,0 +1,82 @@
+---
+title: "Advanced Python Architecture"
+slug: "python-advanced"
+order: 8
+icon: "🐍"
+concept: "Python is a high-level, interpreted language known for readability, but understanding its internals is key for senior roles. The Global Interpreter Lock (GIL) prevents multiple native threads from executing Python bytecodes simultaneously in CPython. Advanced patterns include Decorators (functions modifying functions), Generators (memory-efficient iterators using 'yield'), and Context Managers."
+interviewScript: "When discussing Python concurrency, the GIL is the elephant in the room. I explain that multithreading in Python is great for I/O-bound tasks (like network requests) because the GIL is released during I/O. However, for CPU-bound tasks, multithreading provides no speedup; you must use the multiprocessing module to bypass the GIL and utilize multiple cores. Beyond concurrency, senior Python involves understanding memory management—specifically reference counting and the garbage collector for cyclic references—and writing memory-efficient code using Generators instead of loading massive lists into RAM."
+pitfalls:
+  - "Using mutable default arguments in functions (e.g., `def append_to(item, my_list=[]):`), which retain state across calls."
+  - "Misunderstanding the difference between `is` (identity) and `==` (equality)."
+  - "Trying to use multithreading to speed up CPU-heavy mathematical computations."
+  - "Not using Context Managers (`with` statement) for file I/O or database connections, leading to resource leaks."
+exercises:
+  1-day:
+    - "Explain the Global Interpreter Lock (GIL) and its impact on threading."
+    - "What is the difference between a list comprehension and a generator expression?"
+  3-day:
+    - "Write a decorator that logs the execution time of any function it wraps."
+    - "Explain how Python handles memory management and garbage collection."
+    - "Create a Generator function that yields the Fibonacci sequence infinitely."
+  7-day:
+    - "Implement a custom Context Manager class using `__enter__` and `__exit__` methods."
+    - "Write a script demonstrating multiprocessing vs multithreading performance on a CPU-bound task."
+    - "Build a custom metaclass that automatically registers all subclasses in a registry dictionary."
+---
+
+## Visual Concept: The Global Interpreter Lock (GIL)
+
+```text
+ ┌──────────────────────────┐    ┌──────────────────────────┐
+ │ MULTITHREADING (1 Core)  │    │ MULTIPROCESSING (N Cores)│
+ │                          │    │                          │
+ │  ┌────────────────────┐  │    │  ┌────────────────────┐  │
+ │  │ Python Process     │  │    │  │ Python Process 1   │  │
+ │  │        GIL         │  │    │  │       GIL          │  │
+ │  │         │          │  │    │  │    [Thread 1]      │  │
+ │  │ [T1]--wait--[T1]   │  │    │  └────────────────────┘  │
+ │  │   [T2]--wait--[T2] │  │    │  ┌────────────────────┐  │
+ │  └────────────────────┘  │    │  │ Python Process 2   │  │
+ │                          │    │  │       GIL          │  │
+ │ * Only ONE thread runs   │    │  │    [Thread 1]      │  │
+ │   bytecode at a time.    │    │  └────────────────────┘  │
+ │ * Good for I/O bound.    │    │ * True parallel CPU      │
+ └──────────────────────────┘    └──────────────────────────┘
+```
+
+## Deep Dive: The GIL and Concurrency
+
+The CPython Global Interpreter Lock prevents true parallel execution of Python bytecode.
+
+<Quiz
+  question="If you have a Python script that downloads 100 images from the internet (an I/O-bound task), which concurrency approach is best?"
+  optionsJSON={`[
+    { "id": "a", "text": "Multiprocessing, because it bypasses the GIL.", "isCorrect": false },
+    { "id": "b", "text": "Multithreading or asyncio, because the GIL is released while waiting for I/O operations.", "isCorrect": true, "explanation": "When a Python thread is waiting for network I/O, it releases the GIL, allowing other threads to run. Multithreading is lightweight and perfect for this scenario." },
+    { "id": "c", "text": "Synchronous loop, because the GIL prevents any speedup anyway.", "isCorrect": false },
+    { "id": "d", "text": "Cython compilation.", "isCorrect": false }
+  ]`}
+/>
+
+## Code Review Scenario: Mutable Defaults
+
+Look at this common Python mistake:
+
+\`\`\`python
+def add_employee(emp_name, emp_list=[]):
+    emp_list.append(emp_name)
+    return emp_list
+
+print(add_employee("John")) # ['John']
+print(add_employee("Jane")) # ['John', 'Jane'] - Wait, what?
+\`\`\`
+
+**The Fix:** Default arguments are evaluated *once* when the function is defined, not every time it's called. Always use `None` for mutable defaults:
+
+\`\`\`python
+def add_employee(emp_name, emp_list=None):
+    if emp_list is None:
+        emp_list = []
+    emp_list.append(emp_name)
+    return emp_list
+\`\`\`

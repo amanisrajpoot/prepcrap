@@ -1,0 +1,86 @@
+---
+title: "FastAPI System Design"
+slug: "fastapi-design"
+order: 9
+icon: "⚡"
+concept: "FastAPI is a modern, high-performance web framework for building APIs with Python based on standard Python type hints. It leverages Starlette for the web parts and Pydantic for the data parts. It supports asynchronous programming natively, making it extremely fast, and provides automatic OpenAPI documentation."
+interviewScript: "My approach to FastAPI centers on its two core pillars: asynchronous execution and Pydantic validation. Unlike Flask or Django, FastAPI is asynchronous from the ground up, allowing it to handle high concurrency seamlessly. I leverage Pydantic models extensively, not just for request validation, but as the single source of truth for domain schemas. Additionally, FastAPI's powerful Dependency Injection system allows me to cleanly manage database sessions, authentication headers, and shared logic without polluting the route handlers."
+pitfalls:
+  - "Writing synchronous, blocking code (like heavy DB queries or requests) inside an `async def` route, which halts the entire ASGI event loop."
+  - "Failing to decouple Pydantic request schemas (inbound) from response schemas (outbound), potentially leaking sensitive DB fields."
+  - "Not utilizing Dependency Injection for database sessions, leading to manual connection management and leaks."
+  - "Ignoring the generated OpenAPI schema instead of using it to auto-generate frontend TypeScript clients."
+exercises:
+  1-day:
+    - "What is the difference between Starlette and Pydantic in the context of FastAPI?"
+    - "Explain the difference between `def` and `async def` route handlers in FastAPI."
+  3-day:
+    - "Write a Pydantic model that validates a user registration payload (email formatting, password strength)."
+    - "Implement a FastAPI Dependency that extracts and validates a JWT token from the Authorization header."
+    - "Explain how FastAPI handles synchronous `def` routes under the hood (hint: thread pool)."
+  7-day:
+    - "Build a complete FastAPI application with SQLAlchemy async sessions injected via Dependencies."
+    - "Implement a custom Exception Handler in FastAPI to standardize all API error responses."
+    - "Write integration tests for a FastAPI app using `TestClient` and Pytest."
+---
+
+## Visual Concept: Async vs Sync Execution in FastAPI
+
+```text
+ ┌──────────────────────────┐    ┌──────────────────────────┐
+ │ 'async def' ROUTE        │    │ 'def' ROUTE              │
+ │                          │    │                          │
+ │     [ Event Loop ]       │    │     [ Event Loop ]       │
+ │           │              │    │           │ (delegates)  │
+ │     (await query)        │    │  ┌────────▼───────────┐  │
+ │   ...yields control...   │    │  │ Thread Pool Worker │  │
+ │           │              │    │  │   (Sync query)     │  │
+ │  (Event loop handles     │    │  └────────┬───────────┘  │
+ │   other requests)        │    │           │              │
+ │           │              │    │  (Waits for thread to    │
+ │    (query finishes)      │    │   finish and return)     │
+ │           │              │    │           │              │
+ │    [ Return Data ]       │    │    [ Return Data ]       │
+ └──────────────────────────┘    └──────────────────────────┘
+```
+
+## Deep Dive: Async Route Handlers
+
+The most critical mistake in FastAPI is misunderstanding the event loop.
+
+<Quiz
+  question="What happens if you use a slow, synchronous database library (like standard psycopg2) inside an 'async def' FastAPI route?"
+  optionsJSON={`[
+    { "id": "a", "text": "FastAPI will automatically convert it to asynchronous code.", "isCorrect": false },
+    { "id": "b", "text": "It will block the entire event loop, meaning no other requests can be processed until the database query finishes.", "isCorrect": true, "explanation": "If you define a route as 'async def', FastAPI executes it directly on the main event loop thread. A synchronous blocking call halts that thread completely." },
+    { "id": "c", "text": "FastAPI throws a SyntaxError.", "isCorrect": false },
+    { "id": "d", "text": "FastAPI runs it in a background thread pool automatically.", "isCorrect": false }
+  ]`}
+/>
+
+## Dependency Injection Example
+
+FastAPI's DI system is elegant and eliminates boilerplate:
+
+\`\`\`python
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy.orm import Session
+
+app = FastAPI()
+
+# 1. Define the dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# 2. Inject it into the route
+@app.get("/users/{user_id}")
+def read_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+\`\`\`

@@ -1,0 +1,78 @@
+---
+title: "Express.js Patterns"
+slug: "expressjs-patterns"
+order: 7
+icon: "🚂"
+concept: "Express.js is a minimal routing and middleware web framework for Node.js. An Express application is essentially a series of middleware function calls. A middleware function has access to the request object (req), the response object (res), and the next middleware function in the application's request-response cycle."
+interviewScript: "The heart of Express.js is the middleware pattern. When a request hits the server, it passes through a pipeline of functions. Each function can modify the request/response, end the request early, or pass control to the next function using next(). I always structure my Express apps with a clear separation of concerns: Routers define endpoints, Controllers handle business logic, and custom Error Handling middleware sits at the very end of the pipeline. One critical detail: error handling middleware in Express must have exactly four arguments (err, req, res, next), otherwise Express treats it as standard middleware."
+pitfalls:
+  - "Forgetting to call next() or res.send(), leaving the request hanging until it times out."
+  - "Not catching asynchronous errors in route handlers, causing unhandled promise rejections that crash the Node process."
+  - "Defining error-handling middleware before route definitions instead of at the end."
+  - "Polluting controllers with database logic instead of using a service layer."
+exercises:
+  1-day:
+    - "Explain what a middleware function is and its arguments."
+    - "Write a simple Express route that returns 'Hello World'."
+  3-day:
+    - "Write a global error handling middleware for an Express app."
+    - "Implement an authentication middleware that verifies a JWT token."
+    - "Refactor an async route handler to properly catch errors and pass them to next()."
+  7-day:
+    - "Build a highly scalable Express application structure using the Controller-Service-Repository pattern."
+    - "Implement a custom rate-limiting middleware from scratch using Redis."
+    - "Create an Express wrapper function that automatically catches async errors and passes them to the error handler."
+---
+
+## Visual Concept: The Middleware Pipeline
+
+```text
+ Client Request
+       │
+ ┌─────▼───────────────────────────────┐
+ │ Express App                         │
+ │                                     │
+ │  ┌─────────────────────────────┐    │
+ │  │ Logger Middleware           │    │
+ │  │ (req, res, next)            │    │
+ │  └─────────┬───────────────────┘    │
+ │            │ next()                 │
+ │  ┌─────────▼───────────────────┐    │
+ │  │ Auth Middleware             │    │
+ │  │ (req, res, next)            │    │
+ │  └─────────┬───────────────────┘    │
+ │            │ next()                 │
+ │  ┌─────────▼───────────────────┐    │
+ │  │ Route Handler (Controller)  │    │
+ │  │ res.send() / res.json()     │    │
+ │  └─────────┬───────────────────┘    │
+ │            │                        │
+ │  ┌─────────▼───────────────────┐    │
+ │  │ Error Handler               │    │
+ │  │ (err, req, res, next)       │    │
+ │  └─────────────────────────────┘    │
+ └─────────────────────────────────────┘
+       │
+ Server Response
+```
+
+## Deep Dive: The Middleware Pipeline
+
+Think of Express as a literal pipeline. The request flows down, and the response flows back up.
+
+<InteractiveEditor
+  template="vanilla"
+  filesJSON={`{
+    "/index.js": "const req = { user: null };\\nconst res = { send: (msg) => console.log('Response:', msg) };\\n\\n// Mocking the Express middleware pattern\\nfunction authMiddleware(req, res, next) {\\n  console.log('1. Auth Middleware running...');\\n  if (!req.user) {\\n    console.log('Authentication failed! Modifying req...');\\n    req.user = 'Guest'; // Mutating request\\n  }\\n  next();\\n}\\n\\nfunction loggingMiddleware(req, res, next) {\\n  console.log('2. Logging user:', req.user);\\n  next();\\n}\\n\\nfunction routeHandler(req, res) {\\n  console.log('3. Route Handler running...');\\n  res.send('Welcome, ' + req.user);\\n}\\n\\n// Pipeline execution simulator\\nfunction executePipeline(req, res, middlewares) {\\n  let index = 0;\\n  function next() {\\n    if (index < middlewares.length) {\\n      middlewares[index++](req, res, next);\\n    }\\n  }\\n  next();\\n}\\n\\nexecutePipeline(req, res, [authMiddleware, loggingMiddleware, routeHandler]);"
+  }`}
+/>
+
+<Quiz
+  question="Why does an Express error-handling middleware require exactly four arguments: (err, req, res, next)?"
+  optionsJSON={`[
+    { "id": "a", "text": "Because JavaScript requires four arguments to capture stack traces.", "isCorrect": false },
+    { "id": "b", "text": "It relies on function.length. Express checks the number of arguments to differentiate error middleware from regular middleware.", "isCorrect": true, "explanation": "Express under the hood uses 'func.length === 4' to identify error handlers. If you omit 'next', it drops to 3 arguments and Express treats it as regular middleware, skipping it when errors occur." },
+    { "id": "c", "text": "The 'err' object is automatically injected by the Node.js V8 engine.", "isCorrect": false },
+    { "id": "d", "text": "It doesn't actually require four, you can use (req, res, err) instead.", "isCorrect": false }
+  ]`}
+/>
