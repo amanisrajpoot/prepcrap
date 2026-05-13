@@ -87,7 +87,7 @@ export default function Quiz({ question, options, optionsJSON, slug: propsSlug }
         </span>
       </div>
 
-      <h4 className="text-xl font-bold text-foreground mb-6 leading-tight">{question}</h4>
+      <h4 className="text-lg md:text-xl font-bold text-foreground mb-6 leading-tight">{question}</h4>
 
       <div className="space-y-3">
         {parsedOptions.map((option) => {

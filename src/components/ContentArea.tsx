@@ -37,10 +37,10 @@ function ContentAreaInner({ children, count, pillars }: ContentAreaProps) {
 
       {/* View Mode Toggle & Simulator */}
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-12">
-        <div className="flex p-1 rounded-full bg-surface border border-[rgba(139,148,255,0.1)] shadow-lg">
+        <div className="flex p-1 rounded-full bg-surface border border-[rgba(139,148,255,0.1)] shadow-lg w-full md:w-auto justify-center">
           <button
             onClick={() => setViewMode("deep-dive")}
-            className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold transition-all ${
+            className={`flex items-center justify-center gap-2 px-4 md:px-6 py-2 rounded-full text-[10px] md:text-xs font-bold transition-all flex-1 md:flex-none ${
               viewMode === "deep-dive"
                 ? "bg-accent-primary text-white shadow-glow-sm"
                 : "text-foreground/40 hover:text-foreground/70"
@@ -51,7 +51,7 @@ function ContentAreaInner({ children, count, pillars }: ContentAreaProps) {
           </button>
           <button
             onClick={() => setViewMode("rapid-revision")}
-            className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold transition-all ${
+            className={`flex items-center justify-center gap-2 px-4 md:px-6 py-2 rounded-full text-[10px] md:text-xs font-bold transition-all flex-1 md:flex-none ${
               viewMode === "rapid-revision"
                 ? "bg-accent-rose text-white shadow-[0_0_15px_rgba(244,114,182,0.3)]"
                 : "text-foreground/40 hover:text-foreground/70"
@@ -64,7 +64,7 @@ function ContentAreaInner({ children, count, pillars }: ContentAreaProps) {
 
         <button
           onClick={() => setIsSimulatorOpen(true)}
-          className="flex items-center gap-2 px-6 py-3 rounded-full bg-surface border border-accent-emerald/30 text-accent-emerald text-xs font-bold hover:bg-accent-emerald/10 transition-all shadow-lg"
+          className="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-surface border border-accent-emerald/30 text-accent-emerald text-xs font-bold hover:bg-accent-emerald/10 transition-all shadow-lg w-full md:w-auto"
         >
           <BrainCircuit className="w-4 h-4" />
           Flash Revision
@@ -80,7 +80,7 @@ function ContentAreaInner({ children, count, pillars }: ContentAreaProps) {
 
       {/* Accordion Pillars */}
       <section className="w-full max-w-3xl mx-auto" id="pillars-container">
-        <div className="flex items-center justify-between mb-6">
+        <div className="sticky top-20 z-10 bg-background/80 backdrop-blur-md py-4 -mx-4 px-4 md:mx-0 md:px-0 flex items-center justify-between mb-6 border-b border-white/5">
           <h2 className="text-xl font-bold text-foreground">
             {viewMode === "rapid-revision" ? "Revision Cards" : "Study Pillars"}
           </h2>

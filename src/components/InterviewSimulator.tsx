@@ -26,13 +26,13 @@ export default function InterviewSimulator({ pillars, onClose }: InterviewSimula
       <div className="absolute inset-0 bg-background/80 backdrop-blur-xl animate-fade-in" onClick={onClose} />
       
       {/* Modal */}
-      <div className="relative w-full max-w-2xl glass-card p-6 md:p-10 animate-scale-in overflow-hidden">
+      <div className="relative w-[95%] md:w-full max-w-2xl max-h-[85vh] md:max-h-[90vh] glass-card flex flex-col animate-scale-in overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute -top-24 -left-24 w-48 h-48 bg-accent-primary/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-accent-secondary/10 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8 relative z-10">
+        {/* Header (Fixed) */}
+        <div className="flex-shrink-0 p-6 md:p-10 pb-4 flex items-center justify-between relative z-10 border-b border-white/5">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-accent-primary/10 text-accent-primary">
               <BrainCircuit className="w-5 h-5" />
@@ -49,16 +49,18 @@ export default function InterviewSimulator({ pillars, onClose }: InterviewSimula
           </button>
         </div>
 
-        {/* Progress bar */}
-        <div className="w-full h-1 bg-white/5 rounded-full mb-10 overflow-hidden">
-          <div 
-            className="h-full bg-accent-primary transition-all duration-500" 
-            style={{ width: `${((currentIndex + 1) / total) * 100}%` }}
-          />
+        {/* Progress bar (Fixed) */}
+        <div className="px-6 md:px-10 relative z-10">
+          <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-accent-primary transition-all duration-500" 
+              style={{ width: `${((currentIndex + 1) / total) * 100}%` }}
+            />
+          </div>
         </div>
 
-        {/* Content Area */}
-        <div className="space-y-6 relative z-10">
+        {/* Content Area (Scrollable) */}
+        <div className="flex-1 overflow-y-auto p-6 md:p-10 py-8 space-y-6 relative z-10 scrollbar-thin scrollbar-thumb-white/10">
           <div className="flex items-center gap-3 mb-2">
             <span className="text-3xl">{currentPillar.icon}</span>
             <h4 className="text-xl font-bold tracking-tight">{currentPillar.title}</h4>
@@ -77,8 +79,8 @@ export default function InterviewSimulator({ pillars, onClose }: InterviewSimula
           </div>
         </div>
 
-        {/* Footer Navigation */}
-        <div className="mt-12 flex items-center justify-between relative z-10">
+        {/* Footer Navigation (Fixed) */}
+        <div className="flex-shrink-0 p-6 md:p-10 pt-4 border-t border-white/5 flex items-center justify-between relative z-10 bg-surface/50 backdrop-blur-md">
           <button 
             onClick={prev}
             className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-white/5 text-sm font-medium transition-colors"

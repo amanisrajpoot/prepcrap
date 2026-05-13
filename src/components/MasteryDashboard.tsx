@@ -87,7 +87,7 @@ export default function MasteryDashboard({ pillars }: MasteryDashboardProps) {
         </div>
       </div>
 
-      <div className="overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide md:overflow-visible">
+      <div className="overflow-x-auto pb-4 -mx-2 px-2 md:overflow-visible">
         <div className="flex md:grid md:grid-cols-8 lg:grid-cols-10 gap-3 min-w-max md:min-w-0">
           {pillars.map((pillar) => {
             const status = getPillarStatus(pillar.slug, 1);

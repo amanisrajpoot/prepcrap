@@ -42,7 +42,7 @@ export default function VisualDiagram({ nodes = [], nodesJSON, connections = [],
   if (!parsedNodes || parsedNodes.length === 0) return null;
 
   return (
-    <div className="my-8 p-6 rounded-2xl border border-[rgba(139,148,255,0.15)] bg-[rgba(10,11,20,0.4)] backdrop-blur-sm overflow-hidden relative group">
+    <div className="my-8 p-6 rounded-2xl border border-[rgba(139,148,255,0.15)] bg-[rgba(10,11,20,0.4)] backdrop-blur-sm overflow-x-auto relative group">
       {/* Background grid effect */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
            style={{ backgroundImage: "radial-gradient(#7c5cfc 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
@@ -59,7 +59,7 @@ export default function VisualDiagram({ nodes = [], nodesJSON, connections = [],
         </div>
       )}
 
-      <div className={`relative z-10 flex ${type === "stack" || type === "queue" ? "flex-col-reverse" : "flex-wrap justify-center"} gap-4`}>
+      <div className={`relative z-10 flex ${type === "stack" || type === "queue" ? "flex-col-reverse" : "flex-nowrap md:flex-wrap justify-center"} gap-4 min-w-max md:min-w-0`}>
         {parsedNodes.map((node, i) => (
           <React.Fragment key={node.id}>
             <div 

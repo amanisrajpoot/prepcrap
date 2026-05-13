@@ -201,7 +201,7 @@ export default function AccordionPillar({
             )}
 
             {/* Interactive MDX Content (Quizzes, Editors, etc.) */}
-            <div className={`pt-6 mt-6 border-t border-[rgba(139,148,255,0.1)] prose-mdx ${isRevision ? "revision-mode" : ""}`}>
+            <div className={`px-4 md:px-6 pb-6 prose-mdx max-w-none ${viewMode === 'rapid-revision' ? 'revision-mode' : ''}`}>
               {/* In Revision mode, we might want to only show Quizzes. 
                   But MDXRemote renders everything. We'll handle this in components or just keep it. */}
               {children}
