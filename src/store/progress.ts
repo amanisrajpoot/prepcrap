@@ -7,6 +7,7 @@ interface ProgressState {
   completedExercises: Record<string, boolean>;
   masteredPillars: Record<string, boolean>;
   quizScores: Record<string, boolean>; // slug -> passed
+  reviewDates: Record<string, number>; // slug -> timestamp
   viewMode: ViewMode;
   toggleExercise: (id: string) => void;
   isCompleted: (id: string) => boolean;
@@ -22,6 +23,7 @@ export const useProgressStore = create<ProgressState>()(
       completedExercises: {},
       masteredPillars: {},
       quizScores: {},
+      reviewDates: {},
       viewMode: "deep-dive",
       toggleExercise: (id: string) =>
         set((state) => ({
@@ -32,12 +34,20 @@ export const useProgressStore = create<ProgressState>()(
         })),
       isCompleted: (id: string) => !!get().completedExercises[id],
       setMastered: (slug: string, mastered: boolean) =>
-        set((state) => ({
-          masteredPillars: {
-            ...state.masteredPillars,
-            [slug]: mastered,
-          },
-        })),
+        set((state) => {
+          const newMastered = { ...state.masteredPillars, [slug]: mastered };
+          const newReviewDates = { ...state.reviewDates };
+          
+          if (mastered) {
+            // Set next review to 3 days from now
+            newReviewDates[slug] = Date.now() + 3 * 24 * 60 * 60 * 1000;
+          }
+          
+          return {
+            masteredPillars: newMastered,
+            reviewDates: newReviewDates,
+          };
+        }),
       setQuizPassed: (slug: string, passed: boolean) =>
         set((state) => ({
           quizScores: {

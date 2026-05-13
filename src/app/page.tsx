@@ -6,6 +6,7 @@ import { getAllPillars } from "@/lib/mdx";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import InteractiveEditor from "@/components/InteractiveEditor";
 import Quiz from "@/components/Quiz";
+import VisualDiagram from "@/components/VisualDiagram";
 
 export default function Home() {
   const pillars = getAllPillars();
@@ -14,6 +15,7 @@ export default function Home() {
   const components = {
     InteractiveEditor,
     Quiz,
+    VisualDiagram,
   };
 
   return (

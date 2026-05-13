@@ -26,20 +26,14 @@ exercises:
 
 ## Visual Concept: SQL vs NoSQL Scaling
 
-```text
- ┌──────────────────────────┐    ┌──────────────────────────┐
- │ VERTICAL SCALING (SQL)   │    │ HORIZONTAL SCALING (NoSQL│
- │                          │    │                          │
- │      [ Server ]          │    │    [ Node 1 ] (A-H)      │
- │    More CPU/RAM/SSD      │    │           +              │
- │                          │    │    [ Node 2 ] (I-P)      │
- │  * Hard hardware limit   │    │           +              │
- │  * Expensive at scale    │    │    [ Node 3 ] (Q-Z)      │
- │  * Maintains strict ACID │    │                          │
- │                          │    │  * Infinite scalability  │
- │                          │    │  * Data is partitioned   │
- └──────────────────────────┘    └──────────────────────────┘
-```
+<VisualDiagram
+  title="Database Scaling Strategies"
+  type="flow"
+  nodesJSON='[
+    { "id": "sql", "label": "SQL (Vertical)", "sublabel": "Strong Consistency (ACID)", "icon": "database", "status": "highlight" },
+    { "id": "nosql", "label": "NoSQL (Horizontal)", "sublabel": "Eventual Consistency (BASE)", "icon": "database" }
+  ]'
+/>
 
 ## Deep Dive: Indexing and B-Trees
 

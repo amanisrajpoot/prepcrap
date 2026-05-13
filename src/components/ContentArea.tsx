@@ -3,9 +3,11 @@
 import { TrackProvider, useTrack } from "@/context/TrackContext";
 import TrackSelector from "@/components/TrackSelector";
 import MasteryDashboard from "@/components/MasteryDashboard";
+import InterviewSimulator from "@/components/InterviewSimulator";
 import { useProgressStore } from "@/store/progress";
 import { PillarFrontmatter } from "@/types/content";
-import { BookOpen, Zap } from "lucide-react";
+import { BookOpen, Zap, BrainCircuit } from "lucide-react";
+import { useState } from "react";
 
 interface ContentAreaProps {
   children: React.ReactNode;
@@ -16,6 +18,7 @@ interface ContentAreaProps {
 function ContentAreaInner({ children, count, pillars }: ContentAreaProps) {
   const { selectedTrack, setSelectedTrack } = useTrack();
   const { viewMode, setViewMode } = useProgressStore();
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
 
   return (
     <>
@@ -32,8 +35,8 @@ function ContentAreaInner({ children, count, pillars }: ContentAreaProps) {
         />
       </section>
 
-      {/* View Mode Toggle */}
-      <div className="flex items-center justify-center mb-12">
+      {/* View Mode Toggle & Simulator */}
+      <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-12">
         <div className="flex p-1 rounded-full bg-surface border border-[rgba(139,148,255,0.1)] shadow-lg">
           <button
             onClick={() => setViewMode("deep-dive")}
@@ -58,7 +61,22 @@ function ContentAreaInner({ children, count, pillars }: ContentAreaProps) {
             Rapid Revision
           </button>
         </div>
+
+        <button
+          onClick={() => setIsSimulatorOpen(true)}
+          className="flex items-center gap-2 px-6 py-3 rounded-full bg-surface border border-accent-emerald/30 text-accent-emerald text-xs font-bold hover:bg-accent-emerald/10 transition-all shadow-lg"
+        >
+          <BrainCircuit className="w-4 h-4" />
+          Flash Revision
+        </button>
       </div>
+
+      {isSimulatorOpen && (
+        <InterviewSimulator 
+          pillars={pillars} 
+          onClose={() => setIsSimulatorOpen(false)} 
+        />
+      )}
 
       {/* Accordion Pillars */}
       <section className="w-full max-w-3xl mx-auto" id="pillars-container">

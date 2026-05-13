@@ -26,25 +26,16 @@ exercises:
 
 ## Visual Concept: The Event Loop Architecture
 
-```text
- ┌────────────────┐       ┌─────────────────┐
- │   Call Stack   │       │     Web APIs    │
- │                │       │   (setTimeout,  │
- │  [ console() ] │ ────> │    fetch, DOM)  │
- │  [ main()    ] │       └────────┬────────┘
- └───────▲────────┘                │
-         │                         │ pushes to
-         │                         ▼
-         │               ┌───────────────────┐
-         │<──────────────│ Macrotask Queue   │
-         │  Event Loop   │ [Timer callback]  │
-         │  (checks if   └───────────────────┘
-         │  stack empty)           
-         │               ┌───────────────────┐
-         └───────────────│ Microtask Queue   │<── Highest Priority
-                         │ [Promise resolve] │
-                         └───────────────────┘
-```
+<VisualDiagram
+  title="JavaScript Concurrency Model"
+  type="flow"
+  nodesJSON='[
+    { "id": "stack", "label": "Call Stack", "sublabel": "Synchronous Execution", "icon": "cpu" },
+    { "id": "webapi", "label": "Web APIs", "sublabel": "DOM, Fetch, Timers", "icon": "network" },
+    { "id": "micro", "label": "Microtask Queue", "sublabel": "Promises, MutationObserver", "icon": "layers", "status": "highlight" },
+    { "id": "macro", "label": "Macrotask Queue", "sublabel": "setTimeout, setInterval", "icon": "layers" }
+  ]'
+/>
 
 ## Deep Dive: The Event Loop & Concurrency
 
@@ -52,9 +43,11 @@ The most common senior interview question involves predicting the output of asyn
 
 <InteractiveEditor
   template="vanilla"
-  filesJSON={`{
-    "/index.js": "console.log('1. Script start');\\n\\nsetTimeout(() => {\\n  console.log('4. setTimeout (Macrotask)');\\n}, 0);\\n\\nPromise.resolve()\\n  .then(() => {\\n    console.log('3. Promise 1 (Microtask)');\\n  })\\n  .then(() => {\\n    console.log('3.1 Promise 2 (Microtask)');\\n  });\\n\\nconsole.log('2. Script end');\\n\\n// Run this and check the console output below!\\n"
-  }`}
+  challengeTitle="Predict Output Order"
+  solutionRegex="console\.log\('3\. Promise 1 \(Microtask\)'\)"
+  filesJSON='{
+    "/index.js": "console.log(\"1. Script start\");\n\nsetTimeout(() => {\n  console.log(\"4. setTimeout (Macrotask)\");\n}, 0);\n\nPromise.resolve()\n  .then(() => {\n    console.log(\"3. Promise 1 (Microtask)\");\n  })\n  .then(() => {\n    console.log(\"3.1 Promise 2 (Microtask)\");\n  });\n\nconsole.log(\"2. Script end\");\n\n// Run this and check the console output below!\n"
+  }'
 />
 
 <Quiz

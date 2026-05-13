@@ -26,27 +26,16 @@ exercises:
 
 ## Visual Concept: High-Level Web Architecture
 
-```text
-       [Users]
-          │
-  (DNS & CDN Layer)
-   [Route53 / CloudFront]
-          │
-          ▼
-   [Load Balancer] ──────────────┐
-          │                      │
-   ┌──────┴──────┐         [Rate Limiter]
-   ▼             ▼
- [App          [App
- Server 1]     Server 2] ────> [Message Queue] ──> [Worker Nodes]
-   │             │
-   │             │             [Cache (Redis)]
-   └──────┬──────┘                   ▲
-          │                          │
-          ▼                          ▼
-    [Primary DB] <────────────> [Read Replicas]
-    (Write Operations)         (Read Operations)
-```
+<VisualDiagram
+  title="Scalable Web Infrastructure"
+  type="flow"
+  nodesJSON='[
+    { "id": "cdn", "label": "CDN & DNS", "sublabel": "Edge Caching", "icon": "network" },
+    { "id": "lb", "label": "Load Balancer", "sublabel": "Health Checks & TLS", "icon": "cpu" },
+    { "id": "app", "label": "App Cluster", "sublabel": "Auto-scaling Group", "icon": "cpu", "status": "highlight" },
+    { "id": "db", "label": "Database Layer", "sublabel": "Primary/Replica", "icon": "database" }
+  ]'
+/>
 
 ## Deep Dive: The CAP Theorem
 
