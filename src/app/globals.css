@@ -428,3 +428,36 @@ body {
   color: var(--foreground);
   font-weight: 700;
 }
+/* ───────────────────────────────────────────────
+   Revision Mode & Learning Enhancements
+   ─────────────────────────────────────────────── */
+
+.revision-mode .InteractiveEditor {
+  display: none; /* Hide code playground in rapid revision */
+}
+
+.revision-mode .Quiz {
+  margin-top: 0;
+  border-style: dashed;
+  background: rgba(244, 114, 182, 0.05);
+}
+
+.shadow-glow-sm {
+  box-shadow: 0 0 15px rgba(124, 92, 252, 0.4);
+}
+
+.prose-mdx.revision-mode p {
+  font-size: 0.9rem;
+  color: rgba(232, 234, 246, 0.5);
+}
+
+/* Mastery animations */
+@keyframes mastery-pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+
+.mastered-badge {
+  animation: mastery-pulse 2s infinite;
+}

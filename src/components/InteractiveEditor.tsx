@@ -24,7 +24,7 @@ export default function InteractiveEditor({
   const parsedFiles = filesJSON ? JSON.parse(filesJSON) : (files || {});
 
   return (
-    <div className="my-6 rounded-xl overflow-hidden border border-[rgba(139,148,255,0.2)] shadow-md">
+    <div className="InteractiveEditor my-6 rounded-xl overflow-hidden border border-[rgba(139,148,255,0.2)] shadow-md">
       <SandpackProvider
         template={template}
         theme="dark"

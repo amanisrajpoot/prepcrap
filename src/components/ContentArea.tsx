@@ -1,24 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import type { TrackDay, PillarFrontmatter } from "@/types/content";
+import { TrackProvider, useTrack } from "@/context/TrackContext";
 import TrackSelector from "@/components/TrackSelector";
-import AccordionPillar from "@/components/AccordionPillar";
-
-interface PillarData {
-  frontmatter: PillarFrontmatter;
-  contentNode: React.ReactNode;
-}
+import MasteryDashboard from "@/components/MasteryDashboard";
+import { useProgressStore } from "@/store/progress";
+import { PillarFrontmatter } from "@/types/content";
+import { BookOpen, Zap } from "lucide-react";
 
 interface ContentAreaProps {
-  pillars: PillarData[];
+  children: React.ReactNode;
+  count: number;
+  pillars: PillarFrontmatter[];
 }
 
-export default function ContentArea({ pillars }: ContentAreaProps) {
-  const [selectedTrack, setSelectedTrack] = useState<TrackDay>(3);
+function ContentAreaInner({ children, count, pillars }: ContentAreaProps) {
+  const { selectedTrack, setSelectedTrack } = useTrack();
+  const { viewMode, setViewMode } = useProgressStore();
 
   return (
     <>
+      {/* Mastery Dashboard */}
+      <section className="mb-12">
+        <MasteryDashboard pillars={pillars} />
+      </section>
+
       {/* Track Selector */}
       <section className="mb-12 md:mb-16">
         <TrackSelector
@@ -27,44 +32,57 @@ export default function ContentArea({ pillars }: ContentAreaProps) {
         />
       </section>
 
+      {/* View Mode Toggle */}
+      <div className="flex items-center justify-center mb-12">
+        <div className="flex p-1 rounded-full bg-surface border border-[rgba(139,148,255,0.1)] shadow-lg">
+          <button
+            onClick={() => setViewMode("deep-dive")}
+            className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold transition-all ${
+              viewMode === "deep-dive"
+                ? "bg-accent-primary text-white shadow-glow-sm"
+                : "text-foreground/40 hover:text-foreground/70"
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            Deep Dive
+          </button>
+          <button
+            onClick={() => setViewMode("rapid-revision")}
+            className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold transition-all ${
+              viewMode === "rapid-revision"
+                ? "bg-accent-rose text-white shadow-[0_0_15px_rgba(244,114,182,0.3)]"
+                : "text-foreground/40 hover:text-foreground/70"
+            }`}
+          >
+            <Zap className="w-3.5 h-3.5" />
+            Rapid Revision
+          </button>
+        </div>
+      </div>
+
       {/* Accordion Pillars */}
       <section className="w-full max-w-3xl mx-auto" id="pillars-container">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-foreground">
-            Study Pillars
+            {viewMode === "rapid-revision" ? "Revision Cards" : "Study Pillars"}
           </h2>
           <span className="text-xs text-foreground/40 font-mono">
-            {pillars.length} modules
+            {count} modules
           </span>
         </div>
 
-        <div className="space-y-3 stagger-children" key={selectedTrack}>
-          {pillars.length > 0 ? (
-            pillars.map((pillar, index) => (
-              <AccordionPillar
-                key={pillar.frontmatter.slug}
-                frontmatter={pillar.frontmatter}
-                contentNode={pillar.contentNode}
-                selectedTrack={selectedTrack}
-                index={index}
-              />
-            ))
-          ) : (
-            /* Empty state placeholder */
-            <div className="glass-card p-12 text-center">
-              <div className="text-5xl mb-4 animate-float">📚</div>
-              <h3 className="text-lg font-bold text-foreground mb-2">
-                No Content Yet
-              </h3>
-              <p className="text-sm text-foreground/50 max-w-sm mx-auto">
-                Add <code className="text-accent-primary">.mdx</code> files to
-                the <code className="text-accent-primary">content/</code>{" "}
-                directory to get started. Each file represents a study pillar.
-              </p>
-            </div>
-          )}
+        <div className="space-y-3 stagger-children" key={`${selectedTrack}-${viewMode}`}>
+          {children}
         </div>
       </section>
     </>
+  );
+}
+
+export default function ContentArea({ children, count, pillars }: ContentAreaProps) {
+  return (
+    <TrackProvider>
+      <ContentAreaInner count={count} pillars={pillars}>{children}</ContentAreaInner>
+    </TrackProvider>
   );
 }

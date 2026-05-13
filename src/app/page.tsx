@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ContentArea from "@/components/ContentArea";
+import AccordionPillar from "@/components/AccordionPillar";
 import { getAllPillars } from "@/lib/mdx";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import InteractiveEditor from "@/components/InteractiveEditor";
@@ -14,13 +15,6 @@ export default function Home() {
     InteractiveEditor,
     Quiz,
   };
-
-  const pillarData = pillars.map((p) => ({
-    frontmatter: p.frontmatter,
-    contentNode: (
-      <MDXRemote source={p.content} components={components} />
-    ),
-  }));
 
   return (
     <div className="flex flex-col flex-1 min-h-screen relative">
@@ -71,7 +65,7 @@ export default function Home() {
           <div className="flex items-center justify-center gap-8 mt-8 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
             <div className="text-center">
               <p className="text-2xl font-bold text-accent-primary">
-                {pillarData.length}
+                {pillars.length}
               </p>
               <p className="text-[11px] text-foreground/40 uppercase tracking-wider">
                 Pillars
@@ -99,7 +93,17 @@ export default function Home() {
 
         {/* Content Area (Client Component) */}
         <section className="w-full max-w-4xl mx-auto px-6 pb-20">
-          <ContentArea pillars={pillarData} />
+          <ContentArea count={pillars.length} pillars={pillars.map(p => p.frontmatter)}>
+            {pillars.map((p, index) => (
+              <AccordionPillar 
+                key={p.frontmatter.slug} 
+                frontmatter={p.frontmatter}
+                index={index}
+              >
+                <MDXRemote source={p.content} components={components} />
+              </AccordionPillar>
+            ))}
+          </ContentArea>
         </section>
       </main>
 
