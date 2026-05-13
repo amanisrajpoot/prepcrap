@@ -27,7 +27,7 @@ interface BlueprintProps {
 }
 
 export default function VisualDiagram({ nodes = [], nodesJSON, connections = [], title, type = "flow" }: BlueprintProps) {
-  const parsedNodes = nodesJSON ? JSON.parse(nodesJSON) : nodes;
+  const parsedNodes: Node[] = nodesJSON ? JSON.parse(nodesJSON) : (nodes || []);
 
   const getIcon = (type?: string) => {
     switch (type) {
