@@ -1,0 +1,66 @@
+---
+title: "Must-Know Interview Problems"
+slug: "dsa-must-know"
+order: 18
+icon: "🏆"
+concept: "While there are thousands of coding problems, about 25 of them appear in interviews far more frequently than others. These 'High-Yield' problems cover all major data structures and algorithms. For a senior developer, these shouldn't just be 'solved'—they should be used to demonstrate clean code, edge-case handling, and architectural thinking."
+interviewScript: "In my preparation, I focus on the 'Blind 75' or similar curated lists because they target the most representative concepts. For instance, 'Two Sum' is the foundation of HashMaps, while 'Merge Intervals' tests sorting and overlap logic. When I solve these in an interview, I don't just jump into code; I discuss the constraints, propose a brute-force approach first to show I understand the problem, then optimize to the best possible time complexity, all while thinking out loud."
+pitfalls:
+  - "Memorizing the solution code without understanding the underlying logic"
+  - "Failing to handle edge cases like empty inputs, null pointers, or integer overflow"
+  - "Writing messy, non-descriptive code under pressure"
+  - "Not communicating the trade-offs of the chosen solution (e.g., O(n) space vs O(1) space)"
+exercises:
+  1-day:
+    - "Solve 'Two Sum' and explain the O(n) HashMap approach."
+    - "Reverse a Singly Linked List iteratively."
+    - "Describe the logic behind Kadane's Algorithm for Maximum Subarray."
+  3-day:
+    - "Solve 'Merge Intervals' and explain why sorting is necessary."
+    - "Implement 'Validate BST' and explain the recursive constraints."
+    - "Find the 'Lowest Common Ancestor' in a Binary Tree."
+    - "Solve 'Number of Islands' using DFS."
+  7-day:
+    - "Implement an LRU Cache with O(1) performance."
+    - "Solve 'Course Schedule' using Topological Sort (Kahn's Algorithm)."
+    - "Implement 'Serialize and Deserialize a Binary Tree'."
+    - "Solve 'Climbing Stairs' using Dynamic Programming."
+---
+
+## Visual Concept: High-Yield Problem Map
+
+These categories cover the majority of senior-level coding interviews.
+
+<VisualDiagram
+  title="Problem Category Heatmap"
+  type="grid"
+  nodesJSON='[
+    { "id": "arrays", "label": "Arrays & Strings", "sublabel": "Two Sum, Sliding Window", "icon": "database", "status": "highlight" },
+    { "id": "trees", "label": "Trees & Graphs", "sublabel": "BFS, DFS, BST", "icon": "network" },
+    { "id": "linked", "label": "Linked Lists", "sublabel": "Reversing, Cycles", "icon": "layers" },
+    { "id": "dp", "label": "Dynamic Programming", "sublabel": "Climbing Stairs, Knapsack", "icon": "cpu" }
+  ]'
+/>
+
+## Deep Dive: Two Sum (The Gateway Problem)
+
+Even the simplest problems can reveal a lot about a developer's approach to optimization.
+
+<InteractiveEditor
+  template="vanilla"
+  challengeTitle="Optimized Two Sum"
+  solutionRegex="map\.set\(nums\[i\], i\)"
+  filesJSON='{
+    "/index.js": "function twoSum(nums, target) {\n  const map = new Map();\n\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n\n  return [];\n}\n\nconst nums = [2, 7, 11, 15];\nconst target = 9;\nconsole.log(`Two Sum indices for ${target}:`, twoSum(nums, target));\n"
+  }'
+/>
+
+<Quiz
+  question="What is the space complexity of the optimal Two Sum solution using a HashMap?"
+  optionsJSON={`[
+    { "id": "a", "text": "O(1)", "isCorrect": false },
+    { "id": "b", "text": "O(log n)", "isCorrect": false },
+    { "id": "c", "text": "O(n)", "isCorrect": true, "explanation": "In the worst case, you might have to store all 'n' elements of the array in the HashMap before finding a match." },
+    { "id": "d", "text": "O(n^2)", "isCorrect": false }
+  ]`}
+/>

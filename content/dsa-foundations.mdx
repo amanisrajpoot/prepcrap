@@ -1,0 +1,63 @@
+---
+title: "DSA Foundations"
+slug: "dsa-foundations"
+order: 16
+icon: "🏗️"
+concept: "Solid DSA fundamentals are the bedrock of senior-level problem solving. It's not just about knowing the syntax, but understanding the time/space trade-offs (Big O) and choosing the right structure for the job. Arrays vs Linked Lists, Stacks vs Queues, and the power of HashMaps are essential concepts."
+interviewScript: "When discussing data structures, I always start with the use case. For example, if I need O(1) random access, I'll go with an Array. If I'm doing frequent insertions/deletions at the head, a Linked List is superior. Stacks and Queues are crucial for managing state—think of the Call Stack or a message queue. HashMaps are my go-to for O(1) lookups, though I'm always mindful of collision handling and the underlying hash function efficiency."
+pitfalls:
+  - "Using an Array for frequent shifts/unshifts (which are O(n)) instead of a Linked List or Queue"
+  - "Forgetting that HashMap order isn't guaranteed in most implementations"
+  - "Miscalculating space complexity when using recursion (Call Stack memory)"
+  - "Not considering worst-case scenarios for hash collisions"
+exercises:
+  1-day:
+    - "Explain the time complexity differences between an Array and a Doubly Linked List for insertion at index 0."
+    - "Describe how a HashMap handles collisions in 3 sentences."
+  3-day:
+    - "Implement a Stack using only two Queues."
+    - "Explain the difference between a Binary Tree and a Binary Search Tree."
+    - "Describe a real-world use case for a Trie data structure."
+  7-day:
+    - "Build an LRU (Least Recently Used) Cache from scratch using a HashMap and a Doubly Linked List."
+    - "Implement a Min-Heap with insert and extractMin operations."
+    - "Build a simple Trie for autocomplete with insert and search methods."
+---
+
+## Visual Concept: Data Structure Selection
+
+Choosing the right structure is 50% of the battle in any coding interview or system design session.
+
+<VisualDiagram
+  title="DS Selection Flowchart"
+  type="flow"
+  nodesJSON='[
+    { "id": "lookup", "label": "Need O(1) Lookup?", "sublabel": "By Key", "icon": "database" },
+    { "id": "hashmap", "label": "HashMap", "sublabel": "Fastest retrieval", "icon": "layers", "status": "highlight" },
+    { "id": "order", "label": "Need Order?", "sublabel": "FIFO/LIFO/Sorted", "icon": "network" },
+    { "id": "queue", "label": "Queue / Stack", "sublabel": "Sequential flow", "icon": "layers" }
+  ]'
+/>
+
+## Deep Dive: The LRU Cache Challenge
+
+The LRU Cache is a classic senior interview problem because it tests your ability to combine multiple data structures to meet specific performance requirements (O(1) for both `get` and `put`).
+
+<InteractiveEditor
+  template="vanilla"
+  challengeTitle="LRU Cache Implementation"
+  solutionRegex="this\.map\.delete\(node\.key\)"
+  filesJSON='{
+    "/index.js": "class Node {\n  constructor(key, val) {\n    this.key = key;\n    this.val = val;\n    this.next = null;\n    this.prev = null;\n  }\n}\n\nclass LRUCache {\n  constructor(capacity) {\n    this.capacity = capacity;\n    this.map = new Map();\n    this.head = new Node(0, 0);\n    this.tail = new Node(0, 0);\n    this.head.next = this.tail;\n    this.tail.prev = this.head;\n  }\n\n  get(key) {\n    if (this.map.has(key)) {\n      const node = this.map.get(key);\n      this.remove(node);\n      this.insert(node);\n      return node.val;\n    }\n    return -1;\n  }\n\n  put(key, value) {\n    if (this.map.has(key)) {\n      this.remove(this.map.get(key));\n    }\n    if (this.map.size === this.capacity) {\n      this.remove(this.tail.prev);\n    }\n    this.insert(new Node(key, value));\n  }\n\n  remove(node) {\n    this.map.delete(node.key);\n    node.prev.next = node.next;\n    node.next.prev = node.prev;\n  }\n\n  insert(node) {\n    this.map.set(node.key, node);\n    const headNext = this.head.next;\n    this.head.next = node;\n    node.prev = this.head;\n    node.next = headNext;\n    headNext.prev = node;\n  }\n}\n\nconst cache = new LRUCache(2);\ncache.put(1, 1);\ncache.put(2, 2);\nconsole.log(\"Get 1:\", cache.get(1)); // returns 1\ncache.put(3, 3); // evicts key 2\nconsole.log(\"Get 2:\", cache.get(2)); // returns -1 (not found)\n"
+  }'
+/>
+
+<Quiz
+  question="Why is a Doubly Linked List used alongside a HashMap in an LRU Cache?"
+  optionsJSON={`[
+    { "id": "a", "text": "To allow for binary search on the cached items.", "isCorrect": false },
+    { "id": "b", "text": "To ensure that key lookups are O(log n).", "isCorrect": false },
+    { "id": "c", "text": "To enable O(1) removal and insertion of items while maintaining access order.", "isCorrect": true, "explanation": "The HashMap provides O(1) lookup to find the node, while the Doubly Linked List allows O(1) removal and moving that node to the head (most recently used) position." },
+    { "id": "d", "text": "To reduce the memory footprint of the cache.", "isCorrect": false }
+  ]`}
+/>

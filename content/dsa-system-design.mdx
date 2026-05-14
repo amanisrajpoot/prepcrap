@@ -1,0 +1,63 @@
+---
+title: "System Design meets DSA"
+slug: "dsa-system-design"
+order: 19
+icon: "🌐"
+concept: "In senior roles, DSA isn't just about solving puzzles; it's about building distributed systems. Understanding how Bloom Filters optimize databases, how Consistent Hashing enables load balancing, and how B-Trees power indexes is the bridge between algorithms and architecture. This is where 'theoretical' DSA meets 'practical' engineering."
+interviewScript: "When I design a system, I use DSA as my toolbox. For example, if I'm building a rate limiter, I'll use the Token Bucket algorithm. If I need to handle a massive distributed cache, I'll explain how Consistent Hashing minimizes data movement when scaling. When discussing databases, I'll dive into why B+ Trees are preferred over BSTs for disk-based storage due to their high fan-out and low tree height. This demonstrates that I can apply computer science fundamentals to solve real-world scale problems."
+pitfalls:
+  - "Designing a system without considering the underlying data structures' performance characteristics"
+  - "Assuming a simple Hash function is enough for distributed systems (missing the need for Consistent Hashing)"
+  - "Not understanding the difference between disk-based (B-Trees) and memory-based (Skip Lists) structures"
+  - "Using a heavy data structure like a BST when a probabilistic structure like a Bloom Filter would suffice"
+exercises:
+  1-day:
+    - "Explain why Redis uses Skip Lists for its Sorted Set data type."
+    - "Describe the primary advantage of a Bloom Filter in a distributed cache."
+  3-day:
+    - "Design a basic Rate Limiter using the Token Bucket algorithm."
+    - "Explain how Consistent Hashing handles the 'hotspot' problem in load balancing."
+    - "Compare B-Trees vs LSM-Trees for write-heavy vs read-heavy workloads."
+  7-day:
+    - "Implement a simple Token Bucket Rate Limiter in JavaScript."
+    - "Build a basic Bloom Filter with multiple hash functions."
+    - "Design a URL shortener and discuss the trade-offs of the hashing strategy used."
+---
+
+## Visual Concept: From DS to System
+
+Every major architectural component is built on a fundamental data structure.
+
+<VisualDiagram
+  title="DSA in Architecture"
+  type="flow"
+  nodesJSON='[
+    { "id": "lru", "label": "LRU Cache", "sublabel": "Redis Eviction", "icon": "layers" },
+    { "id": "trie", "label": "Trie", "sublabel": "Autocomplete Service", "icon": "network" },
+    { "id": "btree", "label": "B+ Tree", "sublabel": "DB Indexing", "icon": "database", "status": "highlight" },
+    { "id": "consistent", "label": "Consistent Hash", "sublabel": "Load Balancer", "icon": "cpu" }
+  ]'
+/>
+
+## Deep Dive: Token Bucket Rate Limiter
+
+Rate limiting is a core system design topic that relies on a simple yet effective algorithm.
+
+<InteractiveEditor
+  template="vanilla"
+  challengeTitle="Token Bucket Rate Limiter"
+  solutionRegex="this\.tokens -= 1"
+  filesJSON='{
+    "/index.js": "class RateLimiter {\n  constructor(capacity, fillRate) {\n    this.capacity = capacity;\n    this.tokens = capacity;\n    this.fillRate = fillRate; // tokens per second\n    this.lastFillTime = Date.now();\n  }\n\n  allowRequest() {\n    this.refill();\n    if (this.tokens >= 1) {\n      this.tokens -= 1;\n      return true;\n    }\n    return false;\n  }\n\n  refill() {\n    const now = Date.now();\n    const delta = (now - this.lastFillTime) / 1000;\n    this.tokens = Math.min(this.capacity, this.tokens + delta * this.fillRate);\n    this.lastFillTime = now;\n  }\n}\n\nconst limiter = new RateLimiter(5, 1);\n\n// Simulate requests\nsetInterval(() => {\n  if (limiter.allowRequest()) {\n    console.log(\"Request allowed at\", new Date().toLocaleTimeString());\n  } else {\n    console.log(\"Request throttled\");\n  }\n}, 500);\n"
+  }'
+/>
+
+<Quiz
+  question="Why do databases like MySQL and PostgreSQL use B+ Trees for indexing instead of Binary Search Trees?"
+  optionsJSON={`[
+    { "id": "a", "text": "Because B+ Trees are easier to implement.", "isCorrect": false },
+    { "id": "b", "text": "Because B+ Trees have a higher fan-out, leading to a much shorter tree height and fewer disk I/O operations.", "isCorrect": true, "explanation": "Disk access is slow. B+ Trees store hundreds of keys per node, keeping the tree very shallow (usually 3-4 levels for billions of rows), which minimizes the number of disk seeks needed to find a record." },
+    { "id": "c", "text": "Because B+ Trees use less memory than BSTs.", "isCorrect": false },
+    { "id": "d", "text": "Because B+ Trees automatically compress the data.", "isCorrect": false }
+  ]`}
+/>

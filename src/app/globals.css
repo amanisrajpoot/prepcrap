@@ -497,3 +497,14 @@ body {
 .animate-scale-in {
   animation: scale-in 0.4s var(--ease-spring) both;
 }
+/* Sandpack Overrides for Full Width */
+.sp-layout {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+.sp-wrapper {
+  max-width: none !important;
+  width: 100% !important;
+}

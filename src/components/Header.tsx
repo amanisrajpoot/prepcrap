@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Menu, X, Code } from "lucide-react";
 
 export default function Header() {
@@ -28,6 +29,12 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-6" id="main-nav">
           <a href="#pillars-container" className="text-sm text-foreground/50 hover:text-foreground transition-colors">Pillars</a>
           <a href="#track-selector" className="text-sm text-foreground/50 hover:text-foreground transition-colors">Tracks</a>
+          <Link
+            href="/challenges"
+            className="text-sm font-medium text-foreground/50 hover:text-foreground transition-colors"
+          >
+            Challenges
+          </Link>
           <a
             href="https://github.com"
             target="_blank"
@@ -67,6 +74,13 @@ export default function Header() {
             Revision Tracks
           </a>
           <div className="pt-6 border-t border-white/5">
+            <Link
+              href="/challenges"
+              className="text-lg font-bold text-foreground/70"
+              onClick={() => setIsOpen(false)}
+            >
+              Challenges
+            </Link>
             <a
               href="https://github.com"
               target="_blank"

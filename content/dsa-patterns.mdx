@@ -1,0 +1,63 @@
+---
+title: "DSA Problem Patterns"
+slug: "dsa-patterns"
+order: 17
+icon: "🧩"
+concept: "Algorithms aren't just a list of steps to memorize; they are patterns of thought. By recognizing which pattern applies—Sliding Window, Two Pointers, BFS/DFS, etc.—you can solve hundreds of different problems with a single mental model. For a senior developer, identifying the pattern is more important than memorizing the code."
+interviewScript: "When I encounter a new problem, I look for keywords or constraints. If I see 'subarray' or 'substring' and a target value, I immediately think Sliding Window. If the input is sorted, Two Pointers or Binary Search are my first instincts. For tree or graph traversal, I weigh BFS vs DFS based on whether I need the shortest path or to explore deeply. This pattern-based approach allows me to break down complex problems into manageable components quickly."
+pitfalls:
+  - "Applying Two Pointers on an unsorted array without sorting it first (if required)"
+  - "Using BFS when DFS would be more memory-efficient for very wide trees"
+  - "Misidentifying the base case in a recursive DFS solution"
+  - "Using a Sliding Window when the window size isn't clearly defined or changes in a way that doesn't fit the pattern"
+exercises:
+  1-day:
+    - "Explain the difference between a fixed-size and dynamic-size Sliding Window."
+    - "Describe a scenario where Two Pointers is superior to a nested loop (brute force)."
+  3-day:
+    - "Solve the 'Maximum Subarray' problem using Kadane's Algorithm."
+    - "Implement Binary Search on a rotated sorted array."
+    - "Explain the time and space complexity of BFS vs DFS."
+  7-day:
+    - "Implement a recursive DFS to find all permutations of a string."
+    - "Solve the 'Longest Increasing Subsequence' using Dynamic Programming."
+    - "Implement a Merge Sort algorithm and explain the Divide & Conquer strategy."
+---
+
+## Visual Concept: Pattern Decision Tree
+
+Recognizing the pattern is the first step toward a correct and efficient solution.
+
+<VisualDiagram
+  title="Algorithm Decision Tree"
+  type="flow"
+  nodesJSON='[
+    { "id": "input", "label": "Input Type?", "sublabel": "Sorted or Unsorted", "icon": "database" },
+    { "id": "sorted", "label": "Sorted Array", "sublabel": "Use Binary Search / 2-Pointers", "icon": "network", "status": "highlight" },
+    { "id": "subarray", "label": "Subarray/Substring", "sublabel": "Use Sliding Window", "icon": "layers" },
+    { "id": "allpaths", "label": "Exhaustive Search", "sublabel": "Use DFS / Backtracking", "icon": "cpu" }
+  ]'
+/>
+
+## Deep Dive: Sliding Window Technique
+
+The Sliding Window is a powerful technique for reducing O(n²) subarray problems to O(n).
+
+<InteractiveEditor
+  template="vanilla"
+  challengeTitle="Longest Substring without Repeating"
+  solutionRegex="window\.delete\(s\[left\]\)"
+  filesJSON='{
+    "/index.js": "function lengthOfLongestSubstring(s) {\n  let left = 0;\n  let maxLen = 0;\n  const window = new Set();\n\n  for (let right = 0; right < s.length; right++) {\n    while (window.has(s[right])) {\n      window.delete(s[left]);\n      left++;\n    }\n    window.add(s[right]);\n    maxLen = Math.max(maxLen, right - left + 1);\n  }\n\n  return maxLen;\n}\n\nconst test = \"abcabcbb\";\nconsole.log(`Longest substring in \"${test}\":`, lengthOfLongestSubstring(test));\n"
+  }'
+/>
+
+<Quiz
+  question="When would you choose BFS over DFS for traversing a graph?"
+  optionsJSON={`[
+    { "id": "a", "text": "When you need to find the shortest path in an unweighted graph.", "isCorrect": true, "explanation": "BFS explores nodes level by level, ensuring that the first time you reach the target, it is via the shortest possible path." },
+    { "id": "b", "text": "When the graph is extremely deep and narrow.", "isCorrect": false },
+    { "id": "c", "text": "When you want to minimize the space used on the recursion stack.", "isCorrect": false },
+    { "id": "d", "text": "When you are implementing a topological sort.", "isCorrect": false }
+  ]`}
+/>
