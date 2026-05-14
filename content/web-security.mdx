@@ -56,20 +56,10 @@ XSS occurs when an attacker injects malicious scripts into trusted websites.
 
 <Quiz
   question="You are building a React application. You receive a rich-text HTML string from an external API that you need to display. You use the 'dangerouslySetInnerHTML' prop. What is the most critical step you MUST take before rendering?"
-  options={[
-    { "id": "a", "text": "Encode the HTML string to Base64.", "isCorrect": false },
-    { "id": "b", "text": "Sanitize the HTML string on the client-side using a library like DOMPurify.", "isCorrect": true, "explanation": "Before using dangerouslySetInnerHTML, you must sanitize the input to strip out any malicious <script> tags or harmful attributes (like onload=) to prevent XSS attacks." },
-    { "id": "c", "text": "Convert the HTML to Markdown.", "isCorrect": false },
-    { "id": "d", "text": "Set the Content-Type header to text/plain.", "isCorrect": false }
-  ]}
+  optionsJSON="[&#123; &quot;id&quot;: &quot;a&quot;, &quot;text&quot;: &quot;Encode the HTML string to Base64.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;b&quot;, &quot;text&quot;: &quot;Sanitize the HTML string on the client-side using a library like DOMPurify.&quot;, &quot;isCorrect&quot;: true, &quot;explanation&quot;: &quot;Before using dangerouslySetInnerHTML, you must sanitize the input to strip out any malicious <script> tags or harmful attributes (like onload=) to prevent XSS attacks.&quot; &#125;, &#123; &quot;id&quot;: &quot;c&quot;, &quot;text&quot;: &quot;Convert the HTML to Markdown.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;d&quot;, &quot;text&quot;: &quot;Set the Content-Type header to text/plain.&quot;, &quot;isCorrect&quot;: false &#125;]"
 />
 
 <Quiz
   question="Which of the following is the most secure way to store user passwords in a database?"
-  options={[
-    { "id": "a", "text": "Storing them as plain text for easy recovery.", "isCorrect": false },
-    { "id": "b", "text": "Using a reversible encryption algorithm like AES-256.", "isCorrect": false },
-    { "id": "c", "text": "Using a one-way cryptographic hash with a unique salt (e.g., Argon2 or bcrypt).", "isCorrect": true, "explanation": "One-way hashing with salting prevents both original password exposure and rainbow table attacks. Argon2 and bcrypt are industry standards." },
-    { "id": "d", "text": "Encoding them in Base64.", "isCorrect": false }
-  ]}
+  optionsJSON="[&#123; &quot;id&quot;: &quot;a&quot;, &quot;text&quot;: &quot;Storing them as plain text for easy recovery.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;b&quot;, &quot;text&quot;: &quot;Using a reversible encryption algorithm like AES-256.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;c&quot;, &quot;text&quot;: &quot;Using a one-way cryptographic hash with a unique salt (e.g., Argon2 or bcrypt).&quot;, &quot;isCorrect&quot;: true, &quot;explanation&quot;: &quot;One-way hashing with salting prevents both original password exposure and rainbow table attacks. Argon2 and bcrypt are industry standards.&quot; &#125;, &#123; &quot;id&quot;: &quot;d&quot;, &quot;text&quot;: &quot;Encoding them in Base64.&quot;, &quot;isCorrect&quot;: false &#125;]"
 />

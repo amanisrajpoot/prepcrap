@@ -77,10 +77,5 @@ Fiber enables **time-slicing**: React can split rendering work across multiple f
 
 <Quiz
   question="Why does React use the Fiber architecture instead of the stack reconciler?"
-  options={[
-    { "id": "a", "text": "To make the Virtual DOM smaller in memory.", "isCorrect": false },
-    { "id": "b", "text": "To enable incremental, interruptible rendering.", "isCorrect": true, "explanation": "Fiber turns the synchronous, recursive rendering of the old stack reconciler into an interruptible process, allowing React to pause low-priority work." },
-    { "id": "c", "text": "To completely replace the Real DOM.", "isCorrect": false },
-    { "id": "d", "text": "To automatically memoize all components.", "isCorrect": false }
-  ]}
+  optionsJSON="[&#123; &quot;id&quot;: &quot;a&quot;, &quot;text&quot;: &quot;To make the Virtual DOM smaller in memory.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;b&quot;, &quot;text&quot;: &quot;To enable incremental, interruptible rendering.&quot;, &quot;isCorrect&quot;: true, &quot;explanation&quot;: &quot;Fiber turns the synchronous, recursive rendering of the old stack reconciler into an interruptible process, allowing React to pause low-priority work.&quot; &#125;, &#123; &quot;id&quot;: &quot;c&quot;, &quot;text&quot;: &quot;To completely replace the Real DOM.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;d&quot;, &quot;text&quot;: &quot;To automatically memoize all components.&quot;, &quot;isCorrect&quot;: false &#125;]"
 />

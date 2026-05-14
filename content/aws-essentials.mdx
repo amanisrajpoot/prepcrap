@@ -52,12 +52,24 @@ Choosing between Lambda (Serverless) and ECS/EKS (Containers) is a classic syste
 
 <Quiz
   question="You are building a web scraping service that takes 10 to 15 minutes to run per job. Which compute service is the BEST fit?"
-  options={[
-    { "id": "a", "text": "AWS Lambda", "isCorrect": false },
-    { "id": "b", "text": "AWS ECS (Fargate) or EC2", "isCorrect": true, "explanation": "AWS Lambda has a hard maximum execution timeout of 15 minutes. Long-running jobs that approach or exceed this limit should be run on containers (ECS/Fargate) or EC2 instances." },
-    { "id": "c", "text": "Amazon S3", "isCorrect": false },
-    { "id": "d", "text": "AWS API Gateway", "isCorrect": false }
-  ]}
+  optionsJSON='[
+    {
+      "id": "a",
+      "text": "AWS Lambda",
+      "isCorrect": false
+    },
+    {
+      "id": "b",
+      "text": "AWS ECS (Fargate) or EC2",
+      "isCorrect": true,
+      "explanation": "AWS Lambda has a hard maximum execution timeout of 15 minutes."
+    },
+    {
+      "id": "c",
+      "text": "Amazon S3",
+      "isCorrect": false
+    }
+  ]'
 />
 
 ## Architecture Quick Reference

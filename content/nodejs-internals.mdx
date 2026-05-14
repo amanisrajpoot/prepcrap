@@ -65,10 +65,5 @@ The Node.js event loop is more complex than the browser's event loop. It has dis
 
 <Quiz
   question="If you need to process a 5GB video file in a Node.js application running on a server with 1GB of RAM, what is the best approach?"
-  options={[
-    { "id": "a", "text": "Increase the Node.js memory limit using --max-old-space-size.", "isCorrect": false },
-    { "id": "b", "text": "Use fs.readFile() asynchronously to prevent blocking the event loop.", "isCorrect": false },
-    { "id": "c", "text": "Use Node.js Streams (fs.createReadStream) to process the file in small chunks.", "isCorrect": true, "explanation": "Streams allow you to read and process data piece by piece without keeping the entire payload in memory, which is essential for files larger than available RAM." },
-    { "id": "d", "text": "Use child_process to handle the file in a separate thread.", "isCorrect": false }
-  ]}
+  optionsJSON="[&#123; &quot;id&quot;: &quot;a&quot;, &quot;text&quot;: &quot;Increase the Node.js memory limit using --max-old-space-size.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;b&quot;, &quot;text&quot;: &quot;Use fs.readFile() asynchronously to prevent blocking the event loop.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;c&quot;, &quot;text&quot;: &quot;Use Node.js Streams (fs.createReadStream) to process the file in small chunks.&quot;, &quot;isCorrect&quot;: true, &quot;explanation&quot;: &quot;Streams allow you to read and process data piece by piece without keeping the entire payload in memory, which is essential for files larger than available RAM.&quot; &#125;, &#123; &quot;id&quot;: &quot;d&quot;, &quot;text&quot;: &quot;Use child_process to handle the file in a separate thread.&quot;, &quot;isCorrect&quot;: false &#125;]"
 />

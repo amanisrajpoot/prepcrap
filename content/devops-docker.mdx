@@ -55,10 +55,5 @@ A multi-stage build allows you to use a heavy image with all compilation tools t
 
 <Quiz
   question="Why is it a best practice to run 'npm ci' or 'npm install' BEFORE copying the rest of your application source code into the Docker image?"
-  options={[
-    { "id": "a", "text": "Because Docker requires package.json to be the first file in the directory.", "isCorrect": false },
-    { "id": "b", "text": "To leverage Docker layer caching. If your application code changes but your dependencies don't, Docker can reuse the cached 'npm install' layer, saving massive amounts of build time.", "isCorrect": true, "explanation": "Docker caches each instruction. By copying package.json and running install FIRST, that layer is cached. If you copy all source code first, any change to a single line of code invalidates the cache for the 'npm install' step." },
-    { "id": "c", "text": "Because 'npm install' will delete existing files if run after.", "isCorrect": false },
-    { "id": "d", "text": "It is not a best practice; order does not matter in a Dockerfile.", "isCorrect": false }
-  ]}
+  optionsJSON="[&#123; &quot;id&quot;: &quot;a&quot;, &quot;text&quot;: &quot;Because Docker requires package.json to be the first file in the directory.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;b&quot;, &quot;text&quot;: &quot;To leverage Docker layer caching. If your application code changes but your dependencies don't, Docker can reuse the cached 'npm install' layer, saving massive amounts of build time.&quot;, &quot;isCorrect&quot;: true, &quot;explanation&quot;: &quot;Docker caches each instruction. By copying package.json and running install FIRST, that layer is cached. If you copy all source code first, any change to a single line of code invalidates the cache for the 'npm install' step.&quot; &#125;, &#123; &quot;id&quot;: &quot;c&quot;, &quot;text&quot;: &quot;Because 'npm install' will delete existing files if run after.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;d&quot;, &quot;text&quot;: &quot;It is not a best practice; order does not matter in a Dockerfile.&quot;, &quot;isCorrect&quot;: false &#125;]"
 />

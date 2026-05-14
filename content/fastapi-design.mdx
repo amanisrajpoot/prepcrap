@@ -50,12 +50,7 @@ The most critical mistake in FastAPI is misunderstanding the event loop.
 
 <Quiz
   question="What happens if you use a slow, synchronous database library (like standard psycopg2) inside an 'async def' FastAPI route?"
-  options={[
-    { "id": "a", "text": "FastAPI will automatically convert it to asynchronous code.", "isCorrect": false },
-    { "id": "b", "text": "It will block the entire event loop, meaning no other requests can be processed until the database query finishes.", "isCorrect": true, "explanation": "If you define a route as 'async def', FastAPI executes it directly on the main event loop thread. A synchronous blocking call halts that thread completely." },
-    { "id": "c", "text": "FastAPI throws a SyntaxError.", "isCorrect": false },
-    { "id": "d", "text": "FastAPI runs it in a background thread pool automatically.", "isCorrect": false }
-  ]}
+  optionsJSON="[&#123; &quot;id&quot;: &quot;a&quot;, &quot;text&quot;: &quot;FastAPI will automatically convert it to asynchronous code.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;b&quot;, &quot;text&quot;: &quot;It will block the entire event loop, meaning no other requests can be processed until the database query finishes.&quot;, &quot;isCorrect&quot;: true, &quot;explanation&quot;: &quot;If you define a route as 'async def', FastAPI executes it directly on the main event loop thread. A synchronous blocking call halts that thread completely.&quot; &#125;, &#123; &quot;id&quot;: &quot;c&quot;, &quot;text&quot;: &quot;FastAPI throws a SyntaxError.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;d&quot;, &quot;text&quot;: &quot;FastAPI runs it in a background thread pool automatically.&quot;, &quot;isCorrect&quot;: false &#125;]"
 />
 
 ## Dependency Injection Example

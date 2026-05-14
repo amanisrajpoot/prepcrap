@@ -69,10 +69,5 @@ Think of Express as a literal pipeline. The request flows down, and the response
 
 <Quiz
   question="Why does an Express error-handling middleware require exactly four arguments: (err, req, res, next)?"
-  options={[
-    { "id": "a", "text": "Because JavaScript requires four arguments to capture stack traces.", "isCorrect": false },
-    { "id": "b", "text": "It relies on function.length. Express checks the number of arguments to differentiate error middleware from regular middleware.", "isCorrect": true, "explanation": "Express under the hood uses 'func.length === 4' to identify error handlers. If you omit 'next', it drops to 3 arguments and Express treats it as regular middleware, skipping it when errors occur." },
-    { "id": "c", "text": "The 'err' object is automatically injected by the Node.js V8 engine.", "isCorrect": false },
-    { "id": "d", "text": "It doesn't actually require four, you can use (req, res, err) instead.", "isCorrect": false }
-  ]}
+  optionsJSON="[&#123; &quot;id&quot;: &quot;a&quot;, &quot;text&quot;: &quot;Because JavaScript requires four arguments to capture stack traces.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;b&quot;, &quot;text&quot;: &quot;It relies on function.length. Express checks the number of arguments to differentiate error middleware from regular middleware.&quot;, &quot;isCorrect&quot;: true, &quot;explanation&quot;: &quot;Express under the hood uses 'func.length === 4' to identify error handlers. If you omit 'next', it drops to 3 arguments and Express treats it as regular middleware, skipping it when errors occur.&quot; &#125;, &#123; &quot;id&quot;: &quot;c&quot;, &quot;text&quot;: &quot;The 'err' object is automatically injected by the Node.js V8 engine.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;d&quot;, &quot;text&quot;: &quot;It doesn't actually require four, you can use (req, res, err) instead.&quot;, &quot;isCorrect&quot;: false &#125;]"
 />

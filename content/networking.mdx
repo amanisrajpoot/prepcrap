@@ -51,10 +51,5 @@ HTTP/1.1 required multiple TCP connections to download multiple assets simultane
 
 <Quiz
   question="HTTP/2 introduced 'Multiplexing'. What does this actually mean in practice?"
-  options={[
-    { "id": "a", "text": "It allows the server to send multiple HTML files at once.", "isCorrect": false },
-    { "id": "b", "text": "It allows multiple HTTP requests and responses to be sent simultaneously over a single TCP connection.", "isCorrect": true, "explanation": "Multiplexing solves the Head-of-Line blocking problem at the HTTP layer. Instead of opening multiple TCP connections or waiting for one request to finish before starting the next, HTTP/2 interweaves the data frames of multiple requests over one connection." },
-    { "id": "c", "text": "It automatically compresses JavaScript and CSS files.", "isCorrect": false },
-    { "id": "d", "text": "It switches the underlying transport protocol from TCP to UDP.", "isCorrect": false }
-  ]}
+  optionsJSON="[&#123; &quot;id&quot;: &quot;a&quot;, &quot;text&quot;: &quot;It allows the server to send multiple HTML files at once.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;b&quot;, &quot;text&quot;: &quot;It allows multiple HTTP requests and responses to be sent simultaneously over a single TCP connection.&quot;, &quot;isCorrect&quot;: true, &quot;explanation&quot;: &quot;Multiplexing solves the Head-of-Line blocking problem at the HTTP layer. Instead of opening multiple TCP connections or waiting for one request to finish before starting the next, HTTP/2 interweaves the data frames of multiple requests over one connection.&quot; &#125;, &#123; &quot;id&quot;: &quot;c&quot;, &quot;text&quot;: &quot;It automatically compresses JavaScript and CSS files.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;d&quot;, &quot;text&quot;: &quot;It switches the underlying transport protocol from TCP to UDP.&quot;, &quot;isCorrect&quot;: false &#125;]"
 />

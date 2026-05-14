@@ -50,12 +50,7 @@ The CPython Global Interpreter Lock prevents true parallel execution of Python b
 
 <Quiz
   question="If you have a Python script that downloads 100 images from the internet (an I/O-bound task), which concurrency approach is best?"
-  options={[
-    { "id": "a", "text": "Multiprocessing, because it bypasses the GIL.", "isCorrect": false },
-    { "id": "b", "text": "Multithreading or asyncio, because the GIL is released while waiting for I/O operations.", "isCorrect": true, "explanation": "When a Python thread is waiting for network I/O, it releases the GIL, allowing other threads to run. Multithreading is lightweight and perfect for this scenario." },
-    { "id": "c", "text": "Synchronous loop, because the GIL prevents any speedup anyway.", "isCorrect": false },
-    { "id": "d", "text": "Cython compilation.", "isCorrect": false }
-  ]}
+  optionsJSON="[&#123; &quot;id&quot;: &quot;a&quot;, &quot;text&quot;: &quot;Multiprocessing, because it bypasses the GIL.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;b&quot;, &quot;text&quot;: &quot;Multithreading or asyncio, because the GIL is released while waiting for I/O operations.&quot;, &quot;isCorrect&quot;: true, &quot;explanation&quot;: &quot;When a Python thread is waiting for network I/O, it releases the GIL, allowing other threads to run. Multithreading is lightweight and perfect for this scenario.&quot; &#125;, &#123; &quot;id&quot;: &quot;c&quot;, &quot;text&quot;: &quot;Synchronous loop, because the GIL prevents any speedup anyway.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;d&quot;, &quot;text&quot;: &quot;Cython compilation.&quot;, &quot;isCorrect&quot;: false &#125;]"
 />
 
 ## Code Review Scenario: Mutable Defaults

@@ -41,10 +41,5 @@ Adding an index is the fastest way to speed up a slow query, but it comes with a
 
 <Quiz
   question="You have a 'users' table with 10 million rows. You frequently query 'SELECT * FROM users WHERE status = 'active''. The 'status' column only has two possible values: 'active' and 'inactive'. Should you create a B-Tree index on the 'status' column?"
-  options={[
-    { "id": "a", "text": "Yes, an index will always speed up queries with a WHERE clause.", "isCorrect": false },
-    { "id": "b", "text": "No, because the column has low cardinality.", "isCorrect": true, "explanation": "B-Tree indexes are inefficient for low cardinality columns (columns with very few distinct values, like booleans or enums). The database optimizer will likely ignore the index and perform a full table scan anyway, making the index a waste of memory and a drag on inserts." },
-    { "id": "c", "text": "Yes, but only if it's a clustered index.", "isCorrect": false },
-    { "id": "d", "text": "No, you should use a NoSQL database instead.", "isCorrect": false }
-  ]}
+  optionsJSON="[&#123; &quot;id&quot;: &quot;a&quot;, &quot;text&quot;: &quot;Yes, an index will always speed up queries with a WHERE clause.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;b&quot;, &quot;text&quot;: &quot;No, because the column has low cardinality.&quot;, &quot;isCorrect&quot;: true, &quot;explanation&quot;: &quot;B-Tree indexes are inefficient for low cardinality columns (columns with very few distinct values, like booleans or enums). The database optimizer will likely ignore the index and perform a full table scan anyway, making the index a waste of memory and a drag on inserts.&quot; &#125;, &#123; &quot;id&quot;: &quot;c&quot;, &quot;text&quot;: &quot;Yes, but only if it's a clustered index.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;d&quot;, &quot;text&quot;: &quot;No, you should use a NoSQL database instead.&quot;, &quot;isCorrect&quot;: false &#125;]"
 />

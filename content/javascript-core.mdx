@@ -52,10 +52,5 @@ The most common senior interview question involves predicting the output of asyn
 
 <Quiz
   question="If you have an infinite loop running synchronously in the Call Stack, what happens to a resolved Promise waiting in the Microtask queue?"
-  options={[
-    { "id": "a", "text": "It will execute immediately, interrupting the infinite loop.", "isCorrect": false },
-    { "id": "b", "text": "It will execute after 1 millisecond.", "isCorrect": false },
-    { "id": "c", "text": "It will never execute because the Event Loop cannot move items to the Call Stack until the Call Stack is empty.", "isCorrect": true, "explanation": "The Event Loop only moves tasks from the queues to the Call Stack when the Call Stack is entirely empty. A synchronous infinite loop blocks the stack forever." },
-    { "id": "d", "text": "It throws a StackOverflow error.", "isCorrect": false }
-  ]}
+  optionsJSON="[&#123; &quot;id&quot;: &quot;a&quot;, &quot;text&quot;: &quot;It will execute immediately, interrupting the infinite loop.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;b&quot;, &quot;text&quot;: &quot;It will execute after 1 millisecond.&quot;, &quot;isCorrect&quot;: false &#125;, &#123; &quot;id&quot;: &quot;c&quot;, &quot;text&quot;: &quot;It will never execute because the Event Loop cannot move items to the Call Stack until the Call Stack is empty.&quot;, &quot;isCorrect&quot;: true, &quot;explanation&quot;: &quot;The Event Loop only moves tasks from the queues to the Call Stack when the Call Stack is entirely empty. A synchronous infinite loop blocks the stack forever.&quot; &#125;, &#123; &quot;id&quot;: &quot;d&quot;, &quot;text&quot;: &quot;It throws a StackOverflow error.&quot;, &quot;isCorrect&quot;: false &#125;]"
 />
