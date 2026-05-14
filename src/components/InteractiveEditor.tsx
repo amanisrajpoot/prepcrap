@@ -78,15 +78,19 @@ function ValidationPanel({ solutionRegex, onPass }: { solutionRegex?: string, on
   );
 }
 
-export default function InteractiveEditor({
-  files,
-  filesJSON,
-  template = "react",
-  showConsole = true,
-  challengeTitle,
-  solutionRegex
-}: InteractiveEditorProps) {
-  const parsedFiles = filesJSON ? JSON.parse(filesJSON) : (files || {});
+export default function InteractiveEditor(props: InteractiveEditorProps) {
+  const {
+    files,
+    filesJSON,
+    template = "react",
+    showConsole = true,
+    challengeTitle,
+    solutionRegex
+  } = props;
+  console.log("InteractiveEditor - FULL PROPS RECEIVED:", props);
+  const parsedFiles = filesJSON 
+    ? (typeof filesJSON === "string" ? JSON.parse(filesJSON) : filesJSON) 
+    : (files || {});
   const { slug } = usePillar();
   const { setQuizPassed, quizScores } = useProgressStore(); // Reusing quizPassed for "challenge passed"
 

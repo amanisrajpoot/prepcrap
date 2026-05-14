@@ -62,10 +62,10 @@ Next.js forces you to think about *where* your code executes.
 
 <Quiz
   question="Which of the following is TRUE about Client Components in Next.js?"
-  optionsJSON={`[
+  options={[
     { "id": "a", "text": "They only render on the client-side browser.", "isCorrect": false },
     { "id": "b", "text": "They are pre-rendered on the server (SSR) during the initial page load.", "isCorrect": true, "explanation": "Despite the name 'Client Component', Next.js pre-renders them on the server to generate the initial HTML, then hydrates them on the client for interactivity." },
     { "id": "c", "text": "They cannot have Server Components as children under any circumstances.", "isCorrect": false },
     { "id": "d", "text": "They can securely store API keys.", "isCorrect": false }
-  ]`}
+  ]}
 />

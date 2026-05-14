@@ -43,10 +43,10 @@ The CAP theorem states that a distributed data store can only simultaneously pro
 
 <Quiz
   question="Since network partitions (P) are inevitable in real-world distributed systems, you must choose between Consistency (C) and Availability (A). Which of the following systems strongly prioritizes Consistency over Availability?"
-  optionsJSON={`[
+  options={[
     { "id": "a", "text": "A social media feed (e.g., Twitter).", "isCorrect": false },
     { "id": "b", "text": "A distributed caching layer.", "isCorrect": false },
     { "id": "c", "text": "A banking ledger processing financial transactions.", "isCorrect": true, "explanation": "Banks cannot afford inconsistent balances. They will reject a transaction (sacrificing Availability) if they cannot guarantee that the ledger is perfectly Consistent across all nodes." },
     { "id": "d", "text": "A DNS resolution system.", "isCorrect": false }
-  ]`}
+  ]}
 />

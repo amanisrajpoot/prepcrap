@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { CheckCircle2, XCircle, HelpCircle, Trophy } from "lucide-react";
 import { useProgressStore } from "@/store/progress";
 import { usePillar } from "@/context/PillarContext";
@@ -19,30 +19,45 @@ interface QuizProps {
   slug?: string; // Passed from parent or context
 }
 
-export default function Quiz({ question, options, optionsJSON, slug: propsSlug }: QuizProps) {
+export default function Quiz(props: QuizProps) {
+  const { question, options, optionsJSON, slug: propsSlug } = props;
+  console.log("Quiz - FULL PROPS RECEIVED:", props);
   const { setQuizPassed, quizScores } = useProgressStore();
   const { slug: contextSlug } = usePillar();
   const slug = propsSlug || contextSlug;
   
-  let parsedOptions: Option[] = [];
-  try {
-    if (optionsJSON) {
-      parsedOptions = JSON.parse(optionsJSON);
-    } else if (options) {
-      parsedOptions = options;
+  const parsedOptions: Option[] = useMemo(() => {
+    console.log("Quiz Props - question:", question);
+    console.log("Quiz Props - options:", options);
+    console.log("Quiz Props - optionsJSON:", optionsJSON);
+    
+    try {
+      if (options && Array.isArray(options)) {
+        console.log("Using direct options array");
+        return options;
+      } else if (optionsJSON) {
+        if (typeof optionsJSON === "string") {
+          console.log("Parsing optionsJSON string");
+          return JSON.parse(optionsJSON);
+        } else if (Array.isArray(optionsJSON)) {
+          console.log("Using optionsJSON as array");
+          return optionsJSON;
+        }
+      }
+    } catch (err) {
+      console.error("Quiz component failed to parse options:", err, "Raw data:", optionsJSON);
     }
-  } catch (err) {
-    console.error("Quiz component failed to parse options:", err);
-  }
+    console.log("Returning empty options array");
+    return [];
+  }, [options, optionsJSON, question]);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
 
-  // Load state if already passed
+  // Load state if already passed - Only on initial mount or when slug/parsedOptions change
   useEffect(() => {
-    if (slug && quizScores[slug] && !hasSubmitted) {
-      // Find the correct option
+    if (slug && quizScores[slug]) {
       const correct = parsedOptions.find(o => o.isCorrect);
       if (correct) {
         setSelectedId(correct.id);
@@ -50,7 +65,9 @@ export default function Quiz({ question, options, optionsJSON, slug: propsSlug }
         setIsCorrect(true);
       }
     }
-  }, [slug, quizScores, parsedOptions, hasSubmitted]);
+    // We intentionally only run this once on mount or when the pillar/options change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug, JSON.stringify(parsedOptions)]);
 
   const handleSelect = (id: string) => {
     if (!hasSubmitted) {

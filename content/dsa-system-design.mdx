@@ -54,10 +54,10 @@ Rate limiting is a core system design topic that relies on a simple yet effectiv
 
 <Quiz
   question="Why do databases like MySQL and PostgreSQL use B+ Trees for indexing instead of Binary Search Trees?"
-  optionsJSON={`[
+  options={[
     { "id": "a", "text": "Because B+ Trees are easier to implement.", "isCorrect": false },
     { "id": "b", "text": "Because B+ Trees have a higher fan-out, leading to a much shorter tree height and fewer disk I/O operations.", "isCorrect": true, "explanation": "Disk access is slow. B+ Trees store hundreds of keys per node, keeping the tree very shallow (usually 3-4 levels for billions of rows), which minimizes the number of disk seeks needed to find a record." },
     { "id": "c", "text": "Because B+ Trees use less memory than BSTs.", "isCorrect": false },
     { "id": "d", "text": "Because B+ Trees automatically compress the data.", "isCorrect": false }
-  ]`}
+  ]}
 />

@@ -50,12 +50,12 @@ The most critical mistake in FastAPI is misunderstanding the event loop.
 
 <Quiz
   question="What happens if you use a slow, synchronous database library (like standard psycopg2) inside an 'async def' FastAPI route?"
-  optionsJSON={`[
+  options={[
     { "id": "a", "text": "FastAPI will automatically convert it to asynchronous code.", "isCorrect": false },
     { "id": "b", "text": "It will block the entire event loop, meaning no other requests can be processed until the database query finishes.", "isCorrect": true, "explanation": "If you define a route as 'async def', FastAPI executes it directly on the main event loop thread. A synchronous blocking call halts that thread completely." },
     { "id": "c", "text": "FastAPI throws a SyntaxError.", "isCorrect": false },
     { "id": "d", "text": "FastAPI runs it in a background thread pool automatically.", "isCorrect": false }
-  ]`}
+  ]}
 />
 
 ## Dependency Injection Example

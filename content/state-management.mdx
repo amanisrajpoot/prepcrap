@@ -58,10 +58,10 @@ This is the most important distinction modern React developers must make:
 
 <Quiz
   question="Which of the following is the primary advantage of client state libraries like Zustand over React Context for frequently changing global state?"
-  optionsJSON={`[
+  options={[
     { "id": "a", "text": "They use less memory.", "isCorrect": false },
     { "id": "b", "text": "They allow selective subscriptions, preventing unnecessary re-renders of all consumers.", "isCorrect": true, "explanation": "When a value in Context changes, ALL components consuming that Context re-render. Libraries like Zustand allow you to subscribe only to the specific slice of state a component needs." },
     { "id": "c", "text": "They automatically persist state to localStorage.", "isCorrect": false },
     { "id": "d", "text": "They automatically sync with server state.", "isCorrect": false }
-  ]`}
+  ]}
 />

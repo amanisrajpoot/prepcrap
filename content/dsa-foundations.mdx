@@ -54,10 +54,10 @@ The LRU Cache is a classic senior interview problem because it tests your abilit
 
 <Quiz
   question="Why is a Doubly Linked List used alongside a HashMap in an LRU Cache?"
-  optionsJSON={`[
+  options={[
     { "id": "a", "text": "To allow for binary search on the cached items.", "isCorrect": false },
     { "id": "b", "text": "To ensure that key lookups are O(log n).", "isCorrect": false },
     { "id": "c", "text": "To enable O(1) removal and insertion of items while maintaining access order.", "isCorrect": true, "explanation": "The HashMap provides O(1) lookup to find the node, while the Doubly Linked List allows O(1) removal and moving that node to the head (most recently used) position." },
     { "id": "d", "text": "To reduce the memory footprint of the cache.", "isCorrect": false }
-  ]`}
+  ]}
 />

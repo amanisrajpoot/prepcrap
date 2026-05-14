@@ -52,10 +52,10 @@ The most common senior interview question involves predicting the output of asyn
 
 <Quiz
   question="If you have an infinite loop running synchronously in the Call Stack, what happens to a resolved Promise waiting in the Microtask queue?"
-  optionsJSON={`[
+  options={[
     { "id": "a", "text": "It will execute immediately, interrupting the infinite loop.", "isCorrect": false },
     { "id": "b", "text": "It will execute after 1 millisecond.", "isCorrect": false },
     { "id": "c", "text": "It will never execute because the Event Loop cannot move items to the Call Stack until the Call Stack is empty.", "isCorrect": true, "explanation": "The Event Loop only moves tasks from the queues to the Call Stack when the Call Stack is entirely empty. A synchronous infinite loop blocks the stack forever." },
     { "id": "d", "text": "It throws a StackOverflow error.", "isCorrect": false }
-  ]`}
+  ]}
 />
