@@ -25,6 +25,14 @@ import { nodeStreamsPack } from "./node-streams";
 import { nodeConcurrencyPack } from "./node-concurrency";
 import { nodeScalabilityPack } from "./node-scalability";
 import { nodeArchitecturePack } from "./node-architecture";
+import { pgPerformancePack } from "./pg-performance";
+import { pgTransactionsPack } from "./pg-transactions";
+import { pgScalingPack } from "./pg-scaling";
+import { netProtocolsPack } from "./net-protocols";
+import { netDnsPack } from "./net-dns";
+import { netWebsocketsPack } from "./net-websockets";
+import { biSystemDesignPack } from "./bi-system-design";
+import { biBehavioralPack } from "./bi-behavioral";
 import { sdRequirementsPack } from "./sd-requirements";
 import { sdStoragePack } from "./sd-storage";
 import { sdCommunicationPack } from "./sd-communication";
@@ -61,6 +69,14 @@ export const PACK_REGISTRY: Record<string, TopicPack> = {
   "node-concurrency": nodeConcurrencyPack,
   "node-scalability": nodeScalabilityPack,
   "node-architecture": nodeArchitecturePack,
+  "pg-performance": pgPerformancePack,
+  "pg-transactions": pgTransactionsPack,
+  "pg-scaling": pgScalingPack,
+  "net-protocols": netProtocolsPack,
+  "net-dns": netDnsPack,
+  "net-websockets": netWebsocketsPack,
+  "bi-system-design": biSystemDesignPack,
+  "bi-behavioral": biBehavioralPack,
   "sd-requirements": sdRequirementsPack,
   "sd-storage": sdStoragePack,
   "sd-communication": sdCommunicationPack,

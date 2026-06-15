@@ -71,6 +71,17 @@ export const MODULES: CurriculumModule[] = [
   // Frontend Interview
   { id: "fi-system-design", trackId: "frontend-interview", title: "Frontend System Design", order: 1 },
   { id: "fi-behavioral", trackId: "frontend-interview", title: "Behavioral & Communication", order: 2 },
+  // PostgreSQL
+  { id: "pg-performance", trackId: "postgresql", title: "SQL Performance & Indexing", order: 1 },
+  { id: "pg-transactions", trackId: "postgresql", title: "Transactions & Concurrency", order: 2 },
+  { id: "pg-scaling", trackId: "postgresql", title: "Scaling PostgreSQL", order: 3 },
+  // Networking
+  { id: "net-protocols", trackId: "networking", title: "Protocols (TCP/UDP)", order: 1 },
+  { id: "net-dns", trackId: "networking", title: "DNS & Load Balancing", order: 2 },
+  { id: "net-websockets", trackId: "networking", title: "WebSockets & Real-time", order: 3 },
+  // Backend Interview
+  { id: "bi-system-design", trackId: "backend-interview", title: "Backend System Design", order: 1 },
+  { id: "bi-behavioral", trackId: "backend-interview", title: "The Behavioral Round", order: 2 },
 ];
 
 export const TOPICS: CurriculumTopic[] = [
@@ -684,5 +695,171 @@ export const TOPICS: CurriculumTopic[] = [
       ]
     },
     objectives: ["Organize CSS for scale", "Understand CSS-in-JS tradeoffs", "Manage specificity"]
+  },
+
+  // PostgreSQL
+  { 
+    id: "pg-performance", 
+    moduleId: "pg-performance", 
+    trackId: "postgresql", 
+    title: "SQL Performance & Indexing", 
+    order: 1, 
+    associatedOutcomePaths: ["backend-interview"],
+    metadata: { 
+      difficulty: "advanced", 
+      estimatedMinutes: 60, 
+      interviewFrequency: 10, 
+      importance: 10,
+      topGotchas: [
+        "Adding an index doesn't always help; if the planner estimates a sequential scan is faster (e.g. returning 50% of the table), it will ignore the index.",
+        "Composite index order matters (Leftmost prefix rule). Indexing (A, B) helps queries filtering by A, or A and B, but NOT queries filtering only by B.",
+        "Using functions on indexed columns (e.g., WHERE LOWER(email) = '...') requires a specialized Expression Index, otherwise it falls back to a sequential scan."
+      ]
+    },
+    objectives: ["Understand B-Trees", "Optimize queries with EXPLAIN", "Create Composite Indexes"]
+  },
+  { 
+    id: "pg-transactions", 
+    moduleId: "pg-transactions", 
+    trackId: "postgresql", 
+    title: "Transactions & Concurrency", 
+    order: 2, 
+    associatedOutcomePaths: ["backend-interview", "fullstack-interview"],
+    metadata: { 
+      difficulty: "advanced", 
+      estimatedMinutes: 60, 
+      interviewFrequency: 8, 
+      importance: 10,
+      topGotchas: [
+        "Read Committed (the default) does NOT protect against phantom reads or non-repeatable reads.",
+        "Using SELECT FOR UPDATE locks the row to prevent race conditions during money transfers or inventory checks.",
+        "Deadlocks happen when two transactions try to acquire the same locks in different orders."
+      ]
+    },
+    objectives: ["Understand ACID guarantees", "Choose isolation levels", "Prevent race conditions"]
+  },
+  { 
+    id: "pg-scaling", 
+    moduleId: "pg-scaling", 
+    trackId: "postgresql", 
+    title: "Scaling PostgreSQL", 
+    order: 3, 
+    associatedOutcomePaths: ["backend-interview"],
+    metadata: { 
+      difficulty: "advanced", 
+      estimatedMinutes: 45, 
+      interviewFrequency: 7, 
+      importance: 8,
+      topGotchas: [
+        "PostgreSQL creates a new heavy OS process for every connection. You MUST use a connection pooler (like PgBouncer) at scale.",
+        "Read Replicas suffer from replication lag. Do not read from a replica immediately after writing to the primary.",
+        "Sharding is incredibly complex and breaks foreign keys/joins across nodes. Exhaust vertical scaling and read replicas first."
+      ]
+    },
+    objectives: ["Implement Connection Pooling", "Design Read Replicas", "Understand Sharding tradeoffs"]
+  },
+
+  // Networking
+  { 
+    id: "net-protocols", 
+    moduleId: "net-protocols", 
+    trackId: "networking", 
+    title: "Protocols (TCP vs UDP)", 
+    order: 1, 
+    associatedOutcomePaths: ["backend-interview", "fullstack-interview"],
+    metadata: { 
+      difficulty: "intermediate", 
+      estimatedMinutes: 45, 
+      interviewFrequency: 9, 
+      importance: 9,
+      topGotchas: [
+        "TCP guarantees delivery and order (via handshakes and acknowledgements), but is slower due to this overhead.",
+        "UDP guarantees nothing (fire and forget), but is extremely fast. Used for VoIP, gaming, and video streaming.",
+        "HTTP (and HTTP/2) runs on top of TCP. HTTP/3 runs on top of QUIC (which is based on UDP) to solve TCP head-of-line blocking."
+      ]
+    },
+    objectives: ["Differentiate TCP and UDP", "Understand the 3-way handshake", "Explain HTTP/3"]
+  },
+  { 
+    id: "net-dns", 
+    moduleId: "net-dns", 
+    trackId: "networking", 
+    title: "DNS & Load Balancing", 
+    order: 2, 
+    associatedOutcomePaths: ["backend-interview", "fullstack-interview"],
+    metadata: { 
+      difficulty: "advanced", 
+      estimatedMinutes: 60, 
+      interviewFrequency: 10, 
+      importance: 10,
+      topGotchas: [
+        "DNS only maps domain names to IP addresses. It does not handle ports or HTTP routing.",
+        "Layer 4 Load Balancers route based on IPs/Ports (fast, TCP level). Layer 7 Load Balancers route based on HTTP headers/paths (slower, but smarter).",
+        "Sticky sessions (session affinity) can lead to uneven load distribution and hotspotting."
+      ]
+    },
+    objectives: ["Trace a DNS resolution", "Configure Layer 7 routing", "Choose load balancing algorithms"]
+  },
+  { 
+    id: "net-websockets", 
+    moduleId: "net-websockets", 
+    trackId: "networking", 
+    title: "WebSockets & Real-time", 
+    order: 3, 
+    associatedOutcomePaths: ["fullstack-interview"],
+    metadata: { 
+      difficulty: "intermediate", 
+      estimatedMinutes: 45, 
+      interviewFrequency: 7, 
+      importance: 8,
+      topGotchas: [
+        "WebSockets keep a single TCP connection open persistently. They bypass HTTP overhead for bi-directional streaming.",
+        "Server-Sent Events (SSE) are much simpler than WebSockets if you only need uni-directional (server-to-client) streaming.",
+        "Load balancers often kill idle WebSocket connections if no ping/pong heartbeat is maintained."
+      ]
+    },
+    objectives: ["Choose SSE vs WebSockets", "Implement ping/pong heartbeats", "Scale WebSocket servers"]
+  },
+
+  // Backend Interview Guide
+  { 
+    id: "bi-system-design", 
+    moduleId: "bi-system-design", 
+    trackId: "backend-interview", 
+    title: "Backend System Design", 
+    order: 1, 
+    associatedOutcomePaths: ["backend-interview"],
+    metadata: { 
+      difficulty: "advanced", 
+      estimatedMinutes: 90, 
+      interviewFrequency: 10, 
+      importance: 10,
+      topGotchas: [
+        "Failing to ask clarifying questions about Read vs Write ratios. (Is the system read-heavy like Twitter, or write-heavy like IoT?)",
+        "Throwing microservices and Kafka at a problem that could be solved with a single monolithic PostgreSQL instance.",
+        "Not addressing single points of failure (SPOF)."
+      ]
+    },
+    objectives: ["Estimate capacity", "Design APIs", "Draw architecture diagrams"]
+  },
+  { 
+    id: "bi-behavioral", 
+    moduleId: "bi-behavioral", 
+    trackId: "backend-interview", 
+    title: "The Behavioral Round", 
+    order: 2, 
+    associatedOutcomePaths: ["backend-interview"],
+    metadata: { 
+      difficulty: "intermediate", 
+      estimatedMinutes: 45, 
+      interviewFrequency: 10, 
+      importance: 10,
+      topGotchas: [
+        "Blaming another team for an outage instead of explaining the systemic lack of guardrails.",
+        "Focusing too much on 'I' when discussing team achievements, but 'We' when discussing failures. Take extreme ownership.",
+        "Failing to communicate the business impact of your technical backend optimizations (e.g., 'saved $5k/mo on AWS bills')."
+      ]
+    },
+    objectives: ["Master the STAR method", "Conduct blameless post-mortems", "Communicate business impact"]
   }
 ];
