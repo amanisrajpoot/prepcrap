@@ -8,6 +8,17 @@ import { hooksMentalModelsPack } from "./hooks-mental-models";
 import { reactPerformancePack } from "./react-performance";
 import { asyncUxPatternsPack } from "./async-ux-patterns";
 import { modernReactPack } from "./modern-react";
+import { browserRenderingPack } from "./browser-rendering";
+import { browserSecurityPack } from "./browser-security";
+import { browserStoragePack } from "./browser-storage";
+import { frontendSystemDesignPack } from "./frontend-system-design";
+import { frontendBehavioralPack } from "./frontend-behavioral";
+import { htmlA11yPack } from "./html-a11y";
+import { cssLayoutsPack } from "./css-layouts";
+import { cssArchitecturePack } from "./css-architecture";
+import { dsaPatternsPack } from "./dsa-patterns";
+import { dsaHashmapsPack } from "./dsa-hashmaps";
+import { dsaTreesPack } from "./dsa-trees";
 import { nodeRuntimePack } from "./node-runtime";
 import { nodePerformancePack } from "./node-performance";
 import { nodeStreamsPack } from "./node-streams";
@@ -33,6 +44,17 @@ export const PACK_REGISTRY: Record<string, TopicPack> = {
   "react-performance": reactPerformancePack,
   "async-ux-patterns": asyncUxPatternsPack,
   "modern-react": modernReactPack,
+  "browser-rendering": browserRenderingPack,
+  "browser-security": browserSecurityPack,
+  "browser-storage": browserStoragePack,
+  "fi-system-design": frontendSystemDesignPack,
+  "fi-behavioral": frontendBehavioralPack,
+  "html-a11y": htmlA11yPack,
+  "css-layouts": cssLayoutsPack,
+  "css-architecture": cssArchitecturePack,
+  "dsa-patterns": dsaPatternsPack,
+  "dsa-hashmaps": dsaHashmapsPack,
+  "dsa-trees": dsaTreesPack,
   "node-runtime": nodeRuntimePack,
   "node-performance": nodePerformancePack,
   "node-streams": nodeStreamsPack,

@@ -5,19 +5,25 @@ export const GOALS: Goal[] = [
     id: "frontend-mastery",
     title: "Frontend Mastery",
     description: "Master React, Next.js, and core web fundamentals to build scalable UIs.",
-    includedTrackIds: ["javascript", "react", "browser-internals", "networking", "cs-fundamentals", "frontend-interview"]
+    includedTrackIds: ["javascript", "react", "html-css", "browser-internals", "frontend-interview"]
   },
   {
     id: "fullstack-mern",
     title: "Fullstack Developer (MERN)",
     description: "End-to-end engineering using MongoDB, Express, React, and Node.js.",
-    includedTrackIds: ["javascript", "react", "nodejs", "express", "mongodb", "system-design", "cs-fundamentals", "fullstack-interview"]
+    includedTrackIds: ["javascript", "react", "html-css", "nodejs", "express", "mongodb", "system-design", "dsa", "fullstack-interview"]
   },
   {
     id: "backend-mastery",
     title: "Backend & Systems",
     description: "Deep dive into APIs, databases, caching, and scalable architecture.",
-    includedTrackIds: ["nodejs", "postgresql", "system-design", "networking", "cs-fundamentals", "backend-interview"]
+    includedTrackIds: ["nodejs", "postgresql", "system-design", "networking", "backend-interview"]
+  },
+  {
+    id: "dsa-fullstack",
+    title: "DSA for Full Stack",
+    description: "Essential data structures, algorithms, and core patterns actually asked in MERN interviews.",
+    includedTrackIds: ["dsa"]
   }
 ];
 
@@ -27,9 +33,10 @@ export const TRACKS: CurriculumTrack[] = [
   { id: "nodejs", title: "Node.js Fundamentals", type: "technology" },
   { id: "postgresql", title: "PostgreSQL Deep Dive", type: "technology" },
   { id: "system-design", title: "System Design", type: "technology" },
+  { id: "html-css", title: "HTML & CSS Architecture", type: "technology" },
   { id: "browser-internals", title: "Browser Internals", type: "technology" },
   { id: "networking", title: "Networking", type: "technology" },
-  { id: "cs-fundamentals", title: "CS Fundamentals", type: "technology" },
+  { id: "dsa", title: "DSA for Full Stack", type: "technology" },
   // Outcome paths
   { id: "frontend-interview", title: "Frontend Interview Guide", type: "outcome" },
   { id: "backend-interview", title: "Backend Interview Guide", type: "outcome" },
@@ -52,10 +59,18 @@ export const MODULES: CurriculumModule[] = [
   { id: "sd-storage", trackId: "system-design", title: "Storage & Data Modeling", order: 2 },
   { id: "sd-communication", trackId: "system-design", title: "Communication & Distributed Systems", order: 3 },
   { id: "sd-reliability", trackId: "system-design", title: "Reliability & Failure Engineering", order: 4 },
-  { id: "sd-case-studies", trackId: "system-design", title: "Interviews & Case Studies", order: 5 },
-  // CS Fundamentals
-  { id: "cs-dsa", trackId: "cs-fundamentals", title: "Data Structures & Algorithms", order: 1 },
-  { id: "cs-systems", trackId: "cs-fundamentals", title: "Systems & Concurrency", order: 2 },
+  // DSA
+  { id: "dsa-patterns", trackId: "dsa", title: "Core Data Structures & Patterns", order: 1 },
+  { id: "dsa-trees", trackId: "dsa", title: "Trees, Graphs & Recursion", order: 2 },
+  // HTML & CSS
+  { id: "html-a11y", trackId: "html-css", title: "Semantic HTML & Accessibility", order: 1 },
+  { id: "css-architecture", trackId: "html-css", title: "CSS Architecture & Layouts", order: 2 },
+  // Browser Internals
+  { id: "browser-rendering", trackId: "browser-internals", title: "Browser Rendering & Performance", order: 1 },
+  { id: "browser-network", trackId: "browser-internals", title: "Security & Web APIs", order: 2 },
+  // Frontend Interview
+  { id: "fi-system-design", trackId: "frontend-interview", title: "Frontend System Design", order: 1 },
+  { id: "fi-behavioral", trackId: "frontend-interview", title: "Behavioral & Communication", order: 2 },
 ];
 
 export const TOPICS: CurriculumTopic[] = [
@@ -268,6 +283,110 @@ export const TOPICS: CurriculumTopic[] = [
     objectives: ["Understand Server Components", "Explain React 18 Batching", "Reason about the React Compiler's impact"]
   },
 
+  // Browser Internals Topics
+  { 
+    id: "browser-rendering", 
+    moduleId: "browser-rendering", 
+    trackId: "browser-internals", 
+    title: "Critical Rendering Path", 
+    order: 1, 
+    associatedOutcomePaths: ["frontend-interview", "fullstack-interview"],
+    metadata: { 
+      difficulty: "advanced", 
+      estimatedMinutes: 50, 
+      interviewFrequency: 8, 
+      importance: 9,
+      topGotchas: [
+        "Animating layout properties like margin-left forces a full Reflow (Layout) on every frame.",
+        "Synchronous script tags block DOM parsing because the script might call document.write().",
+        "The GPU can only accelerate properties like transform and opacity (Composite phase)."
+      ]
+    },
+    objectives: ["Explain Reflow vs Repaint", "Optimize the Critical Rendering Path", "Understand GPU Acceleration"]
+  },
+  { 
+    id: "browser-security", 
+    moduleId: "browser-network", 
+    trackId: "browser-internals", 
+    title: "Browser Security (CORS, XSS)", 
+    order: 2, 
+    associatedOutcomePaths: ["frontend-interview", "fullstack-interview"],
+    metadata: { 
+      difficulty: "advanced", 
+      estimatedMinutes: 60, 
+      interviewFrequency: 10, 
+      importance: 10,
+      topGotchas: [
+        "CORS does not stop requests from being sent; it stops the browser from reading the response.",
+        "Storing JWTs in localStorage makes them vulnerable to XSS.",
+        "Preflight OPTIONS requests are triggered by custom headers or non-simple content types."
+      ]
+    },
+    objectives: ["Fix CORS errors safely", "Prevent XSS and CSRF", "Configure Content Security Policy (CSP)"]
+  },
+  { 
+    id: "browser-storage", 
+    moduleId: "browser-network", 
+    trackId: "browser-internals", 
+    title: "Storage & Web APIs", 
+    order: 3, 
+    associatedOutcomePaths: ["frontend-interview"],
+    metadata: { 
+      difficulty: "intermediate", 
+      estimatedMinutes: 40, 
+      interviewFrequency: 7, 
+      importance: 8,
+      topGotchas: [
+        "localStorage is synchronous and can block the main thread if reading large amounts of data.",
+        "HttpOnly cookies cannot be read by JavaScript, protecting them from XSS.",
+        "IndexedDB is asynchronous but has an extremely complex API compared to localStorage."
+      ]
+    },
+    objectives: ["Choose the right storage mechanism", "Understand HttpOnly vs Secure cookies", "Explain WebSockets vs Polling"]
+  },
+
+  // Frontend Interview Topics
+  { 
+    id: "fi-system-design", 
+    moduleId: "fi-system-design", 
+    trackId: "frontend-interview", 
+    title: "Frontend System Design", 
+    order: 1, 
+    associatedOutcomePaths: ["frontend-interview"],
+    metadata: { 
+      difficulty: "advanced", 
+      estimatedMinutes: 90, 
+      interviewFrequency: 10, 
+      importance: 10,
+      topGotchas: [
+        "Jumping straight to coding without discussing state architecture, network pagination, or accessibility.",
+        "Failing to normalize relational data in the Redux/Context store (e.g. comments array vs comments map).",
+        "Ignoring error boundaries and fallback UI."
+      ]
+    },
+    objectives: ["Design a component tree", "Architect client-side state", "Handle network latency and errors"]
+  },
+  { 
+    id: "fi-behavioral", 
+    moduleId: "fi-behavioral", 
+    trackId: "frontend-interview", 
+    title: "The Behavioral Round", 
+    order: 2, 
+    associatedOutcomePaths: ["frontend-interview"],
+    metadata: { 
+      difficulty: "intermediate", 
+      estimatedMinutes: 45, 
+      interviewFrequency: 10, 
+      importance: 10,
+      topGotchas: [
+        "Complaining about previous teammates or frameworks instead of discussing objective tradeoffs.",
+        "Answering 'tell me about a time you failed' with a fake weakness.",
+        "Failing to use the STAR method (Situation, Task, Action, Result)."
+      ]
+    },
+    objectives: ["Master the STAR method", "Discuss frontend tradeoffs", "Communicate technical debt"]
+  },
+
   // Node.js Topics
   { 
     id: "node-runtime", 
@@ -443,33 +562,127 @@ export const TOPICS: CurriculumTopic[] = [
     objectives: ["Evolve an architecture through changing constraints", "Communicate tradeoffs", "Design real-world systems like URL Shorteners"]
   },
   
-  // CS Fundamentals
+  // DSA
   { 
     id: "dsa-patterns", 
-    moduleId: "cs-dsa", 
-    trackId: "cs-fundamentals", 
-    title: "Core Data Structures", 
+    moduleId: "dsa-patterns", 
+    trackId: "dsa", 
+    title: "Arrays, Strings & Two Pointers", 
     order: 1, 
-    metadata: { difficulty: "intermediate", estimatedMinutes: 60, interviewFrequency: 10, importance: 9 },
-    objectives: ["Understand arrays and linked lists", "Implement hash maps", "Analyze time/space complexity"]
+    associatedOutcomePaths: ["fullstack-interview"],
+    metadata: { 
+      difficulty: "intermediate", 
+      estimatedMinutes: 60, 
+      interviewFrequency: 10, 
+      importance: 10,
+      topGotchas: [
+        "Using nested loops O(N^2) instead of a hash map or two pointers O(N).",
+        "Modifying strings in JavaScript creates new allocations because strings are immutable.",
+        "Failing to check edge cases like empty arrays or off-by-one pointer errors."
+      ]
+    },
+    objectives: ["Implement Sliding Window", "Master Two Pointers", "Optimize brute force solutions"]
   },
   { 
-    id: "dsa-trees-graphs", 
-    moduleId: "cs-dsa", 
-    trackId: "cs-fundamentals", 
-    title: "Trees, Graphs & Tries", 
+    id: "dsa-hashmaps", 
+    moduleId: "dsa-patterns", 
+    trackId: "dsa", 
+    title: "Hash Maps & Time Complexity", 
     order: 2, 
-    associatedOutcomePaths: ["fullstack-interview", "backend-interview"],
-    metadata: { difficulty: "advanced", estimatedMinutes: 90, interviewFrequency: 8, importance: 8 },
-    objectives: ["Traverse a BST", "Implement BFS and DFS", "Understand when to use a Trie for autocomplete"]
+    associatedOutcomePaths: ["fullstack-interview"],
+    metadata: { 
+      difficulty: "intermediate", 
+      estimatedMinutes: 60, 
+      interviewFrequency: 10, 
+      importance: 10,
+      topGotchas: [
+        "Confusing JS Objects with Map() and when to use which.",
+        "Using array.includes() inside a loop, silently creating O(N^2) complexity.",
+        "Trading space (memory) for time (CPU) without explaining the tradeoff."
+      ]
+    },
+    objectives: ["Trade space for time", "Implement memoization", "Understand Big O Notation"]
   },
   { 
-    id: "caching-os", 
-    moduleId: "cs-systems", 
-    trackId: "cs-fundamentals", 
-    title: "Caching & OS Basics", 
+    id: "dsa-trees", 
+    moduleId: "dsa-trees", 
+    trackId: "dsa", 
+    title: "Trees, Graphs & Recursion", 
     order: 3, 
-    metadata: { difficulty: "advanced", estimatedMinutes: 45, interviewFrequency: 7, importance: 8 },
-    objectives: ["Understand cache eviction policies (LRU/LFU)", "Explain process vs thread", "Identify race conditions"]
+    associatedOutcomePaths: ["fullstack-interview", "frontend-interview"],
+    metadata: { 
+      difficulty: "advanced", 
+      estimatedMinutes: 90, 
+      interviewFrequency: 8, 
+      importance: 9,
+      topGotchas: [
+        "Forgetting the base case in a recursive function, causing a stack overflow.",
+        "Not realizing that the HTML DOM is literally a Tree, and traversing it requires tree traversal algorithms.",
+        "Using recursion when an iterative BFS queue would prevent stack limits on deep graphs."
+      ]
+    },
+    objectives: ["Traverse a DOM tree", "Implement BFS vs DFS", "Understand the Call Stack limit"]
+  },
+
+  // HTML & CSS
+  { 
+    id: "html-a11y", 
+    moduleId: "html-a11y", 
+    trackId: "html-css", 
+    title: "Semantic HTML & Accessibility", 
+    order: 1, 
+    associatedOutcomePaths: ["frontend-interview", "fullstack-interview"],
+    metadata: { 
+      difficulty: "intermediate", 
+      estimatedMinutes: 45, 
+      interviewFrequency: 9, 
+      importance: 10,
+      topGotchas: [
+        "Using a <div> with an onClick handler instead of a <button> breaks keyboard navigation (tabbing) and screen readers.",
+        "Misunderstanding the difference between aria-hidden and display: none.",
+        "Failing to associate <label> elements with inputs."
+      ]
+    },
+    objectives: ["Build accessible forms", "Navigate via keyboard", "Understand the Accessibility Tree"]
+  },
+  { 
+    id: "css-layouts", 
+    moduleId: "css-architecture", 
+    trackId: "html-css", 
+    title: "Modern Layouts (Flexbox vs Grid)", 
+    order: 2, 
+    associatedOutcomePaths: ["frontend-interview", "fullstack-interview"],
+    metadata: { 
+      difficulty: "intermediate", 
+      estimatedMinutes: 60, 
+      interviewFrequency: 8, 
+      importance: 9,
+      topGotchas: [
+        "Using Flexbox to build 2D grids (masonry) instead of CSS Grid.",
+        "Setting fixed px heights on containers, causing text overflow when users zoom in.",
+        "Overusing media queries when Flex-wrap or Grid minmax() handles responsiveness inherently."
+      ]
+    },
+    objectives: ["Choose between 1D and 2D layouts", "Build responsive components natively", "Avoid layout thrashing"]
+  },
+  { 
+    id: "css-architecture", 
+    moduleId: "css-architecture", 
+    trackId: "html-css", 
+    title: "CSS Architecture & Scaling", 
+    order: 3, 
+    associatedOutcomePaths: ["frontend-interview"],
+    metadata: { 
+      difficulty: "advanced", 
+      estimatedMinutes: 45, 
+      interviewFrequency: 7, 
+      importance: 8,
+      topGotchas: [
+        "Specificity wars: using !important or heavily nested selectors (#app .content div p) makes code impossible to override.",
+        "Not understanding the runtime performance cost of CSS-in-JS (like styled-components) injecting style tags on mount.",
+        "Tailwind HTML bloat vs BEM naming conventions."
+      ]
+    },
+    objectives: ["Organize CSS for scale", "Understand CSS-in-JS tradeoffs", "Manage specificity"]
   }
 ];
