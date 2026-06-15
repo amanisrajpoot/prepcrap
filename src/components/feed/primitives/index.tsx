@@ -1,4 +1,6 @@
 import { CheckCircle2, XCircle } from "lucide-react";
+import { useEffect } from "react";
+import { useSound } from "@/hooks/useSound";
 
 // ==========================================
 // DISPLAY LAYER
@@ -23,6 +25,13 @@ export function ExplanationPrimitive({ text }: { text: string }) {
 }
 
 export function FeedbackPrimitive({ isCorrect, message }: { isCorrect: boolean; message: string }) {
+  const { playSuccess, playError } = useSound();
+  
+  useEffect(() => {
+    if (isCorrect) playSuccess();
+    else playError();
+  }, [isCorrect, playSuccess, playError]);
+
   return (
     <div className={`mt-6 p-4 rounded-xl border animate-fade-in-up flex items-start gap-3 ${
       isCorrect ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-red-500/10 border-red-500/20 text-red-400'
@@ -50,6 +59,8 @@ export function InputPrimitive({
   onSubmit?: () => void;
   disabled?: boolean;
 }) {
+  const { playClick } = useSound();
+  
   return (
     <div className="mt-4 flex flex-col gap-3 animate-fade-in-up">
       <input 
@@ -60,12 +71,15 @@ export function InputPrimitive({
         placeholder={placeholder}
         className="w-full bg-surface/50 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-all disabled:opacity-50"
         onKeyDown={e => {
-          if (e.key === 'Enter' && onSubmit && !disabled) onSubmit();
+          if (e.key === 'Enter' && onSubmit && !disabled) {
+            playClick();
+            onSubmit();
+          }
         }}
       />
       {onSubmit && !disabled && (
         <button 
-          onClick={onSubmit}
+          onClick={() => { playClick(); onSubmit(); }}
           className="w-full py-3 rounded-xl bg-accent-primary text-white font-bold transition-all hover:bg-accent-primary/90 active:scale-[0.98]"
         >
           Submit
@@ -86,6 +100,8 @@ export function SelectionPrimitive({
   onSelect: (id: string) => void;
   disabled?: boolean;
 }) {
+  const { playClick } = useSound();
+  
   return (
     <div className="mt-4 flex flex-col gap-3 animate-fade-in-up">
       {options.map(opt => {
@@ -93,7 +109,12 @@ export function SelectionPrimitive({
         return (
           <button
             key={opt.id}
-            onClick={() => !disabled && onSelect(opt.id)}
+            onClick={() => {
+              if (!disabled) {
+                playClick();
+                onSelect(opt.id);
+              }
+            }}
             disabled={disabled}
             className={`w-full p-4 rounded-xl text-left font-medium transition-all ${
               isSelected 
@@ -118,6 +139,8 @@ export function SequencePrimitive({
   selectedIndex: number;
   onItemClick: (index: number) => void;
 }) {
+  const { playClick } = useSound();
+  
   return (
     <div className="mt-6 flex flex-col gap-0 relative animate-fade-in-up">
       <div className="absolute left-[19px] top-4 bottom-4 w-0.5 bg-white/10" />
@@ -128,7 +151,7 @@ export function SequencePrimitive({
         return (
           <button
             key={item.id}
-            onClick={() => onItemClick(idx)}
+            onClick={() => { playClick(); onItemClick(idx); }}
             className={`relative flex items-center gap-4 py-4 px-2 transition-all ${isActive ? 'opacity-100 scale-105' : 'opacity-60 hover:opacity-100'}`}
           >
             <div className={`w-6 h-6 rounded-full shrink-0 flex items-center justify-center relative z-10 transition-colors ${

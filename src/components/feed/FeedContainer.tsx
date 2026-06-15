@@ -6,9 +6,11 @@ import { useFeedStore } from "@/store/feed";
 import { PACK_REGISTRY, FallbackPack } from "@/data/curriculum/packs";
 import ActivityRenderer from "./ActivityRenderer";
 import { ArrowLeft } from "lucide-react";
+import { useSound } from "@/hooks/useSound";
 
 export default function FeedContainer({ topicId }: { topicId: string }) {
   const router = useRouter();
+  const { playSwipe, playTada } = useSound();
   
   // Memoize cards for this specific topic
   const filteredCards = useMemo(() => {
@@ -94,6 +96,14 @@ export default function FeedContainer({ topicId }: { topicId: string }) {
         } else if (newIndex > highestIndex) {
           setHighestIndex(newIndex);
         }
+        
+        // Play sound effects
+        if (newIndex === filteredCards.length - 1) {
+          playTada();
+        } else {
+          playSwipe();
+        }
+        
         setCurrentIndex(newIndex);
       }
     };
