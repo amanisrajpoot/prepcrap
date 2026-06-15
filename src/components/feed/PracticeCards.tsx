@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useFeedStore } from "@/store/feed";
+import { useSound } from "@/hooks/useSound";
 import { 
   QuestionPrimitive, 
   ExplanationPrimitive, 
@@ -16,6 +17,7 @@ import CardWrapper from "./CardWrapper";
 // FILL BLANK CARD
 // =====================================
 export function FillBlankCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const [value, setValue] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -80,11 +82,11 @@ export function FillBlankCard({ card }: { card: any }) {
 
             {!isCorrect && !revealed && (
               <div className="flex items-center gap-3 mt-4">
-                <button onClick={() => { setSubmitted(false); setValue(""); }} className="px-4 py-2 rounded-lg bg-surface border border-accent-primary/30 text-xs font-bold text-accent-primary hover:bg-accent-primary/10 transition-all">
+                <button onClick={() => { playClick(); setSubmitted(false);  setValue(""); }} className="px-4 py-2 rounded-lg bg-surface border border-accent-primary/30 text-xs font-bold text-accent-primary hover:bg-accent-primary/10 transition-all">
                   Try again
                 </button>
                 {mistakes >= 2 && (
-                   <button onClick={() => setRevealed(true)} className="px-4 py-2 rounded-lg bg-surface border border-accent-rose/30 text-xs font-bold text-accent-rose hover:bg-accent-rose/10 transition-all">
+                   <button onClick={() => { playClick(); setRevealed(true); }} className="px-4 py-2 rounded-lg bg-surface border border-accent-rose/30 text-xs font-bold text-accent-rose hover:bg-accent-rose/10 transition-all">
                      I'm Stuck (Reveal Answer)
                    </button>
                 )}
@@ -98,7 +100,7 @@ export function FillBlankCard({ card }: { card: any }) {
                  {payload.explanation && <ExplanationPrimitive text={payload.explanation} />}
                  
                  <div className="mt-6 flex justify-end">
-                    <button onClick={() => { setRevealed(false); setSubmitted(false); setValue(""); }} className="px-4 py-2 rounded-lg bg-surface border border-accent-primary/30 text-xs font-bold text-accent-primary hover:bg-accent-primary/10 transition-all">
+                    <button onClick={() => { playClick(); setRevealed(false);  setSubmitted(false); setValue(""); }} className="px-4 py-2 rounded-lg bg-surface border border-accent-primary/30 text-xs font-bold text-accent-primary hover:bg-accent-primary/10 transition-all">
                       Got it, let me try
                     </button>
                  </div>
@@ -115,6 +117,7 @@ export function FillBlankCard({ card }: { card: any }) {
 // COMPARE CARD
 // =====================================
 export function CompareCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const payload = card.payload; 
   
@@ -197,6 +200,7 @@ export function CompareCard({ card }: { card: any }) {
 // TIMELINE CARD
 // =====================================
 export function TimelineCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const payload = card.payload; 
   
@@ -265,6 +269,7 @@ export function TimelineCard({ card }: { card: any }) {
 // CODE COMPLETION CARD
 // =====================================
 export function CodeCompletionCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const [values, setValues] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -337,7 +342,7 @@ export function CodeCompletionCard({ card }: { card: any }) {
         {!submitted ? (
           <div className="mt-6 flex justify-end animate-fade-in-up">
             <button 
-              onClick={handleSubmit}
+              onClick={() => { playClick(); handleSubmit(); }}
               className="w-full py-3 rounded-xl bg-accent-primary text-white font-bold transition-all hover:bg-accent-primary/90 active:scale-[0.98]"
             >
               Run Code
@@ -357,11 +362,11 @@ export function CodeCompletionCard({ card }: { card: any }) {
 
             {!isCorrect && !revealed && (
               <div className="flex items-center gap-3 mt-4">
-                <button onClick={() => setSubmitted(false)} className="px-4 py-2 rounded-lg bg-surface border border-accent-primary/30 text-xs font-bold text-accent-primary hover:bg-accent-primary/10 transition-all">
+                <button onClick={() => { playClick(); setSubmitted(false); }} className="px-4 py-2 rounded-lg bg-surface border border-accent-primary/30 text-xs font-bold text-accent-primary hover:bg-accent-primary/10 transition-all">
                   Try again
                 </button>
                 {mistakes >= 2 && (
-                   <button onClick={() => setRevealed(true)} className="px-4 py-2 rounded-lg bg-surface border border-accent-rose/30 text-xs font-bold text-accent-rose hover:bg-accent-rose/10 transition-all">
+                   <button onClick={() => { playClick(); setRevealed(true); }} className="px-4 py-2 rounded-lg bg-surface border border-accent-rose/30 text-xs font-bold text-accent-rose hover:bg-accent-rose/10 transition-all">
                      I'm Stuck (Reveal Answer)
                    </button>
                 )}
@@ -375,7 +380,7 @@ export function CodeCompletionCard({ card }: { card: any }) {
                  {payload.explanation && <ExplanationPrimitive text={payload.explanation} />}
                  
                  <div className="mt-6 flex justify-end">
-                    <button onClick={() => { setRevealed(false); setSubmitted(false); }} className="px-4 py-2 rounded-lg bg-surface border border-accent-primary/30 text-xs font-bold text-accent-primary hover:bg-accent-primary/10 transition-all">
+                    <button onClick={() => { playClick(); setRevealed(false);  setSubmitted(false); }} className="px-4 py-2 rounded-lg bg-surface border border-accent-primary/30 text-xs font-bold text-accent-primary hover:bg-accent-primary/10 transition-all">
                       Got it, let me try
                     </button>
                  </div>
@@ -392,6 +397,7 @@ export function CodeCompletionCard({ card }: { card: any }) {
 // PROGRESSIVE MATCH CARD
 // =====================================
 export function ProgressiveMatchCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const payload = card.payload; // { prompt, terms: { id, text, definitionId }[], definitions: { id, text }[] }
   
@@ -460,6 +466,7 @@ export function ProgressiveMatchCard({ card }: { card: any }) {
 // TAP ORDER CARD
 // =====================================
 export function TapOrderCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const payload = card.payload; // { prompt, items: { id, text }[], correctOrder: string[] }
   
@@ -553,6 +560,7 @@ export function TapOrderCard({ card }: { card: any }) {
 // PREDICT NEXT LINE CARD
 // =====================================
 export function PredictNextLineCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const payload = card.payload; // { template, options: { id, code, isCorrect, explanation }[] }
   

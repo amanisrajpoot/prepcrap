@@ -2,10 +2,12 @@
 import { useState, useEffect } from "react";
 import { CheckCircle2, XCircle, HelpCircle, Eye, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useFeedStore } from "@/store/feed";
+import { useSound } from "@/hooks/useSound";
 import CardWrapper from "./CardWrapper";
 import { MCQCard as MCQCardType, CodePredictionCard as CodePredictionCardType, InterviewCard as InterviewCardType, HotTakeCard as HotTakeCardType } from "@/data/feed-cards";
 
 export function MCQCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -79,7 +81,7 @@ export function MCQCard({ card }: { card: any }) {
 
       {!hasSubmitted ? (
         <button
-          onClick={handleSubmit}
+          onClick={() => { playClick(); handleSubmit(); }}
           disabled={!selectedId}
           className="mt-8 w-full py-3.5 rounded-xl bg-gradient-to-r from-accent-primary to-accent-secondary text-white font-bold disabled:opacity-30 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-accent-primary/20"
         >
@@ -101,6 +103,7 @@ export function MCQCard({ card }: { card: any }) {
 }
 
 export function CodePredictionCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -161,7 +164,7 @@ export function CodePredictionCard({ card }: { card: any }) {
       </div>
 
       {!hasSubmitted ? (
-        <button onClick={handleSubmit} disabled={!selectedId} className="mt-6 w-full py-3.5 rounded-xl bg-gradient-to-r from-accent-primary to-accent-secondary text-white font-bold disabled:opacity-30 transition-all hover:scale-[1.02] active:scale-[0.98]">
+        <button onClick={() => { playClick(); handleSubmit(); }} disabled={!selectedId} className="mt-6 w-full py-3.5 rounded-xl bg-gradient-to-r from-accent-primary to-accent-secondary text-white font-bold disabled:opacity-30 transition-all hover:scale-[1.02] active:scale-[0.98]">
           Run Code
         </button>
       ) : (
@@ -179,6 +182,7 @@ export function CodePredictionCard({ card }: { card: any }) {
 }
 
 export function InterviewCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const [revealed, setRevealed] = useState(false);
   const [mountedTime, setMountedTime] = useState(0);
@@ -208,7 +212,7 @@ export function InterviewCard({ card }: { card: any }) {
         {!revealed ? (
           <div className="pt-8 flex flex-col items-center gap-4">
             <p className="text-sm font-medium text-accent-secondary animate-pulse">Think first...</p>
-            <button onClick={handleReveal} className="px-8 py-3 rounded-full border border-accent-primary/30 bg-accent-primary/10 text-accent-primary font-bold hover:bg-accent-primary/20 transition-all flex items-center gap-2">
+            <button onClick={() => { playClick(); handleReveal(); }} className="px-8 py-3 rounded-full border border-accent-primary/30 bg-accent-primary/10 text-accent-primary font-bold hover:bg-accent-primary/20 transition-all flex items-center gap-2">
               <Eye className="w-4 h-4" />
               Reveal Answer
             </button>
@@ -225,6 +229,7 @@ export function InterviewCard({ card }: { card: any }) {
 }
 
 export function HotTakeCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const [voted, setVoted] = useState<"agree" | "disagree" | null>(null);
 
@@ -245,11 +250,11 @@ export function HotTakeCard({ card }: { card: any }) {
         
         {!voted ? (
           <div className="flex gap-4 w-full">
-            <button onClick={() => handleVote("agree")} className="flex-1 py-4 rounded-xl border border-accent-emerald/30 bg-accent-emerald/10 text-accent-emerald font-bold hover:bg-accent-emerald/20 transition-all flex flex-col items-center gap-2">
+            <button onClick={() => { playClick(); handleVote("agree"); }} className="flex-1 py-4 rounded-xl border border-accent-emerald/30 bg-accent-emerald/10 text-accent-emerald font-bold hover:bg-accent-emerald/20 transition-all flex flex-col items-center gap-2">
               <ThumbsUp className="w-6 h-6" />
               Agree
             </button>
-            <button onClick={() => handleVote("disagree")} className="flex-1 py-4 rounded-xl border border-accent-rose/30 bg-accent-rose/10 text-accent-rose font-bold hover:bg-accent-rose/20 transition-all flex flex-col items-center gap-2">
+            <button onClick={() => { playClick(); handleVote("disagree"); }} className="flex-1 py-4 rounded-xl border border-accent-rose/30 bg-accent-rose/10 text-accent-rose font-bold hover:bg-accent-rose/20 transition-all flex flex-col items-center gap-2">
               <ThumbsDown className="w-6 h-6" />
               Disagree
             </button>

@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { CheckCircle2, XCircle, ArrowRight, Star, Bug, GitCompare, MessageSquare, AlertCircle, Target } from "lucide-react";
 import { useFeedStore } from "@/store/feed";
+import { useSound } from "@/hooks/useSound";
 import { QuestionPrimitive, ExplanationPrimitive, FeedbackPrimitive, ConfidencePrimitive, SelectionPrimitive } from "./primitives";
 import CardWrapper from "./CardWrapper";
 
@@ -9,6 +10,7 @@ import CardWrapper from "./CardWrapper";
 // Explain In Your Own Words Card
 // ---------------------------------------------------------
 export function ExplainCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const [answer, setAnswer] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -39,7 +41,7 @@ export function ExplainCard({ card }: { card: any }) {
               className="w-full flex-1 min-h-[150px] p-4 rounded-xl bg-surface border border-[rgba(139,148,255,0.1)] focus:border-accent-primary/50 outline-none resize-none text-sm text-foreground/80 leading-relaxed transition-colors placeholder:text-foreground/30"
             />
             <button 
-              onClick={handleSubmit}
+              onClick={() => { playClick(); handleSubmit(); }}
               disabled={answer.trim().length < 5}
               className="w-full py-3.5 rounded-xl bg-accent-primary text-white font-bold disabled:opacity-30 transition-all hover:bg-accent-primary/90 active:scale-[0.98]"
             >
@@ -69,6 +71,7 @@ export function ExplainCard({ card }: { card: any }) {
 // Debug Card
 // ---------------------------------------------------------
 export function DebugCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const [selectedLine, setSelectedLine] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -120,7 +123,7 @@ export function DebugCard({ card }: { card: any }) {
 
       {!submitted ? (
         <button 
-          onClick={handleSubmit}
+          onClick={() => { playClick(); handleSubmit(); }}
           disabled={selectedLine === null}
           className="w-full mt-6 py-3.5 rounded-xl bg-accent-primary text-white font-bold disabled:opacity-30 transition-all hover:bg-accent-primary/90"
         >
@@ -131,7 +134,7 @@ export function DebugCard({ card }: { card: any }) {
           <FeedbackPrimitive isCorrect={isCorrect} message={isCorrect ? "Excellent eye!" : "Not quite."} />
           <ExplanationPrimitive text={card.payload.explanation} />
           {!isCorrect && (
-            <button onClick={() => { setSubmitted(false); setSelectedLine(null); }} className="mt-4 px-4 py-2 rounded-lg bg-surface border border-accent-primary/30 text-xs font-bold text-accent-primary hover:bg-accent-primary/10 transition-all">
+            <button onClick={() => { playClick(); setSubmitted(false);  setSelectedLine(null); }} className="mt-4 px-4 py-2 rounded-lg bg-surface border border-accent-primary/30 text-xs font-bold text-accent-primary hover:bg-accent-primary/10 transition-all">
               Try again
             </button>
           )}
@@ -145,6 +148,7 @@ export function DebugCard({ card }: { card: any }) {
 // Scenario Card
 // ---------------------------------------------------------
 export function ScenarioCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -184,7 +188,7 @@ export function ScenarioCard({ card }: { card: any }) {
         )}
 
         {!submitted ? (
-          <button onClick={handleSubmit} disabled={!selectedId} className="w-full mt-6 py-3.5 rounded-xl bg-accent-primary text-white font-bold disabled:opacity-30 hover:bg-accent-primary/90 transition-all">
+          <button onClick={() => { playClick(); handleSubmit(); }} disabled={!selectedId} className="w-full mt-6 py-3.5 rounded-xl bg-accent-primary text-white font-bold disabled:opacity-30 hover:bg-accent-primary/90 transition-all">
             Make Decision
           </button>
         ) : (
@@ -192,7 +196,7 @@ export function ScenarioCard({ card }: { card: any }) {
             <FeedbackPrimitive isCorrect={!!isCorrect} message={isCorrect ? "Correct Decision!" : "Suboptimal Decision"} />
             <ExplanationPrimitive text={card.payload.options.find((o:any)=>o.id===selectedId)?.explanation} />
             {!isCorrect && (
-              <button onClick={() => { setSubmitted(false); setSelectedId(null); }} className="mt-4 px-4 py-2 rounded-lg bg-surface border border-accent-primary/30 text-xs font-bold text-accent-primary hover:bg-accent-primary/10 transition-all">
+              <button onClick={() => { playClick(); setSubmitted(false);  setSelectedId(null); }} className="mt-4 px-4 py-2 rounded-lg bg-surface border border-accent-primary/30 text-xs font-bold text-accent-primary hover:bg-accent-primary/10 transition-all">
                 Re-evaluate
               </button>
             )}
@@ -208,6 +212,7 @@ export function ScenarioCard({ card }: { card: any }) {
 // ---------------------------------------------------------
 
 export function IncidentCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -255,7 +260,7 @@ export function IncidentCard({ card }: { card: any }) {
         )}
 
         {!submitted ? (
-          <button onClick={handleSubmit} disabled={!selectedId} className="w-full mt-6 py-3.5 rounded-xl bg-red-600 text-white font-bold disabled:opacity-30 hover:bg-red-700 transition-all shadow-lg shadow-red-900/20">
+          <button onClick={() => { playClick(); handleSubmit(); }} disabled={!selectedId} className="w-full mt-6 py-3.5 rounded-xl bg-red-600 text-white font-bold disabled:opacity-30 hover:bg-red-700 transition-all shadow-lg shadow-red-900/20">
             Investigate
           </button>
         ) : (
@@ -263,7 +268,7 @@ export function IncidentCard({ card }: { card: any }) {
             <FeedbackPrimitive isCorrect={!!isCorrect} message={isCorrect ? "Correct Diagnosis!" : "Incorrect Diagnosis"} />
             <ExplanationPrimitive text={card.payload.options.find((o:any)=>o.id===selectedId)?.explanation} />
             {!isCorrect && (
-              <button onClick={() => { setSubmitted(false); setSelectedId(null); }} className="mt-4 px-4 py-2 rounded-lg bg-surface border border-red-500/30 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-all">
+              <button onClick={() => { playClick(); setSubmitted(false);  setSelectedId(null); }} className="mt-4 px-4 py-2 rounded-lg bg-surface border border-red-500/30 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-all">
                 Try Another Lead
               </button>
             )}
@@ -280,6 +285,7 @@ export function IncidentCard({ card }: { card: any }) {
 // Tradeoff Duel Card
 // ---------------------------------------------------------
 export function TradeoffCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -333,7 +339,7 @@ export function TradeoffCard({ card }: { card: any }) {
         )}
 
         {!submitted ? (
-          <button onClick={handleSubmit} disabled={!selectedId} className="w-full mt-6 py-3.5 rounded-xl bg-accent-amber text-black font-bold disabled:opacity-30 hover:bg-accent-amber/90 transition-all shadow-lg shadow-accent-amber/20">
+          <button onClick={() => { playClick(); handleSubmit(); }} disabled={!selectedId} className="w-full mt-6 py-3.5 rounded-xl bg-accent-amber text-black font-bold disabled:opacity-30 hover:bg-accent-amber/90 transition-all shadow-lg shadow-accent-amber/20">
             Lock In Choice
           </button>
         ) : (
@@ -341,7 +347,7 @@ export function TradeoffCard({ card }: { card: any }) {
             <FeedbackPrimitive isCorrect={!!isCorrect} message={isCorrect ? "Solid Architecture!" : "Flawed Architecture"} />
             <ExplanationPrimitive text={card.payload.options.find((o:any)=>o.id===selectedId)?.explanation} />
             {!isCorrect && (
-              <button onClick={() => { setSubmitted(false); setSelectedId(null); }} className="mt-4 px-4 py-2 rounded-lg bg-surface border border-accent-amber/30 text-xs font-bold text-accent-amber hover:bg-accent-amber/10 transition-all">
+              <button onClick={() => { playClick(); setSubmitted(false);  setSelectedId(null); }} className="mt-4 px-4 py-2 rounded-lg bg-surface border border-accent-amber/30 text-xs font-bold text-accent-amber hover:bg-accent-amber/10 transition-all">
                 Rethink Tradeoffs
               </button>
             )}
@@ -358,6 +364,7 @@ export function TradeoffCard({ card }: { card: any }) {
 import { Calculator } from "lucide-react";
 
 export function EstimationCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -405,7 +412,7 @@ export function EstimationCard({ card }: { card: any }) {
         )}
 
         {!submitted ? (
-          <button onClick={handleSubmit} disabled={!selectedId} className="w-full mt-6 py-3.5 rounded-xl bg-accent-secondary text-white font-bold disabled:opacity-30 hover:bg-accent-secondary/90 transition-all shadow-lg shadow-accent-secondary/20">
+          <button onClick={() => { playClick(); handleSubmit(); }} disabled={!selectedId} className="w-full mt-6 py-3.5 rounded-xl bg-accent-secondary text-white font-bold disabled:opacity-30 hover:bg-accent-secondary/90 transition-all shadow-lg shadow-accent-secondary/20">
             Calculate
           </button>
         ) : (
@@ -413,7 +420,7 @@ export function EstimationCard({ card }: { card: any }) {
             <FeedbackPrimitive isCorrect={!!isCorrect} message={isCorrect ? "Math Checks Out!" : "Math Is Off"} />
             <ExplanationPrimitive text={card.payload.options.find((o:any)=>o.id===selectedId)?.explanation} />
             {!isCorrect && (
-              <button onClick={() => { setSubmitted(false); setSelectedId(null); }} className="mt-4 px-4 py-2 rounded-lg bg-surface border border-accent-secondary/30 text-xs font-bold text-accent-secondary hover:bg-accent-secondary/10 transition-all">
+              <button onClick={() => { playClick(); setSubmitted(false);  setSelectedId(null); }} className="mt-4 px-4 py-2 rounded-lg bg-surface border border-accent-secondary/30 text-xs font-bold text-accent-secondary hover:bg-accent-secondary/10 transition-all">
                 Recalculate
               </button>
             )}
@@ -428,6 +435,7 @@ export function EstimationCard({ card }: { card: any }) {
 // Why It Matters Card
 // ---------------------------------------------------------
 export function WhyItMattersCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const { recordEvent } = useFeedStore();
   
   // Auto complete on view
@@ -463,6 +471,7 @@ import { Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function TopicCompleteCard({ card }: { card: any }) {
+  const { playClick } = useSound();
   const router = useRouter();
 
   return (
