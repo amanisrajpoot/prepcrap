@@ -1,0 +1,139 @@
+{
+  "topic": "JavaScript Promises",
+  "topicId": "promises",
+  "metadata": {
+    "importance": 10,
+    "interviewFrequency": 10,
+    "difficulty": "intermediate",
+    "prerequisites": [
+      "callbacks",
+      "event-loop"
+    ]
+  },
+  "objectives": [
+    "Identify the three states of a Promise",
+    "Chain multiple asynchronous operations using then/catch",
+    "Debug unhandled promise rejections",
+    "Predict execution order of Promises alongside setTimeout"
+  ],
+  "activityPlan": [
+    {
+      "objective": "Identify the three states of a Promise",
+      "activities": [
+        "why-it-matters",
+        "progressive-match"
+      ]
+    },
+    {
+      "objective": "Chain multiple asynchronous operations using then/catch",
+      "activities": [
+        "code-completion",
+        "predict-next-line"
+      ]
+    },
+    {
+      "objective": "Debug unhandled promise rejections",
+      "activities": [
+        "debug"
+      ]
+    },
+    {
+      "objective": "Predict execution order of Promises alongside setTimeout",
+      "activities": [
+        "tap-order"
+      ]
+    }
+  ],
+  "activities": [
+    {
+      "category": "learn",
+      "type": "why-it-matters",
+      "difficulty": "foundation",
+      "payload": {
+        "topic": "Promises",
+        "explanation": "Before Promises, JavaScript developers suffered from 'Callback Hell', resulting in unreadable, pyramid-shaped code. Promises provide a clean, unified object to represent the eventual completion (or failure) of an asynchronous operation.",
+        "interviewContext": "Interviewers frequently ask you to rewrite callback-based code using Promises or async/await to test your understanding of asynchronous control flow."
+      }
+    },
+    {
+      "category": "practice",
+      "type": "progressive-match",
+      "difficulty": "foundation",
+      "payload": {
+        "prompt": "Match the Promise states",
+        "terms": [
+          { "id": "t1", "text": "Pending", "definitionId": "d1" },
+          { "id": "t2", "text": "Fulfilled", "definitionId": "d2" },
+          { "id": "t3", "text": "Rejected", "definitionId": "d3" }
+        ],
+        "definitions": [
+          { "id": "d1", "text": "Initial state, neither fulfilled nor rejected" },
+          { "id": "d2", "text": "The operation completed successfully" },
+          { "id": "d3", "text": "The operation failed" }
+        ]
+      }
+    },
+    {
+      "category": "practice",
+      "type": "code-completion",
+      "difficulty": "intermediate",
+      "payload": {
+        "prompt": "Chain the promises correctly to fetch data and then parse it.",
+        "template": "fetch('/api/user')\\n  .{{blank1}}(res => res.json())\\n  .{{blank2}}(data => console.log(data))\\n  .{{blank3}}(err => console.error(err));",
+        "answers": [
+          { "blank1": "then", "blank2": "then", "blank3": "catch" }
+        ],
+        "explanation": "The first `.then` receives the response and returns a new Promise (parsing JSON). The second `.then` receives the parsed data. The `.catch` at the end catches errors from ANY preceding step in the chain."
+      }
+    },
+    {
+      "category": "practice",
+      "type": "predict-next-line",
+      "difficulty": "advanced",
+      "payload": {
+        "template": "Promise.resolve(1)\\n  .then(x => x + 1)\\n  .then(x => { throw new Error('Fail'); })\\n  .catch(err => 10)\\n  .then(x => console.log(x)); // What logs here?",
+        "options": [
+          { "id": "o1", "code": "undefined", "isCorrect": false, "explanation": "A catch block returns a resolved promise unless it throws another error." },
+          { "id": "o2", "code": "10", "isCorrect": true, "explanation": "The catch block intercepts the error, returns 10, which implicitly resolves the next promise in the chain with the value 10." },
+          { "id": "o3", "code": "Error: Fail", "isCorrect": false, "explanation": "The error was already caught by the catch block." }
+        ]
+      }
+    },
+    {
+      "category": "practice",
+      "type": "debug",
+      "difficulty": "intermediate",
+      "payload": {
+        "question": "Find the unhandled promise rejection bug.",
+        "code": "function fetchUser() {\\n  return fetch('/user')\\n    .then(res => res.json())\\n}\\n\\nfetchUser().then(user => console.log(user));",
+        "bugLineIndex": 5,
+        "explanation": "If fetchUser() fails, the error will swallow silently because there is no .catch() attached to the fetchUser() call on line 6."
+      }
+    },
+    {
+      "category": "practice",
+      "type": "tap-order",
+      "difficulty": "advanced",
+      "payload": {
+        "prompt": "In what order will these log?",
+        "items": [
+          { "id": "macrotask", "text": "setTimeout(..., 0)" },
+          { "id": "sync", "text": "console.log('Sync')" },
+          { "id": "microtask", "text": "Promise.resolve().then(...)" }
+        ],
+        "correctOrder": ["sync", "microtask", "macrotask"]
+      }
+    }
+  ],
+  "assessment": [
+    {
+      "category": "evaluate",
+      "type": "explain",
+      "difficulty": "interview",
+      "payload": {
+        "prompt": "Explain the difference between the MacroTask queue and MicroTask queue.",
+        "modelAnswer": "The MicroTask queue (Promises, MutationObserver) has higher priority than the MacroTask queue (setTimeout, setInterval). After every synchronous operation finishes, the event loop empties the ENTIRE MicroTask queue before moving on to the next MacroTask."
+      }
+    }
+  ]
+}

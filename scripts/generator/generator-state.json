@@ -1,0 +1,12 @@
+{
+  "react-rendering-engine": {
+    "generatedConcepts": [
+      "Trace the flow of data from a state update through React's reconciliation process to a specific DOM mutation.",
+      "Implement memoization strategies (e.g., React.memo, useCallback, useMemo) to prevent unnecessary component re-renders based on profiling data."
+    ],
+    "objectives": [
+      "Trace the flow of data from a state update through React's reconciliation process to a specific DOM mutation.",
+      "Implement memoization strategies (e.g., React.memo, useCallback, useMemo) to prevent unnecessary component re-renders based on profiling data."
+    ]
+  }
+}

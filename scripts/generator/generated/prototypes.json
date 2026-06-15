@@ -1,0 +1,105 @@
+{
+  "topic": "JavaScript Prototypes",
+  "topicId": "prototypes",
+  "metadata": {
+    "importance": 8,
+    "interviewFrequency": 8,
+    "difficulty": "advanced",
+    "prerequisites": ["objects", "functions"]
+  },
+  "objectives": [
+    "Differentiate between .prototype and __proto__",
+    "Trace property lookups up the prototype chain",
+    "Implement Prototypal Inheritance using Object.create()",
+    "Identify performance pitfalls of mutating prototypes"
+  ],
+  "activityPlan": [
+    {
+      "objective": "Differentiate between .prototype and __proto__",
+      "activities": ["progressive-match"]
+    },
+    {
+      "objective": "Trace property lookups up the prototype chain",
+      "activities": ["predict-next-line"]
+    },
+    {
+      "objective": "Implement Prototypal Inheritance using Object.create()",
+      "activities": ["code-completion"]
+    },
+    {
+      "objective": "Identify performance pitfalls of mutating prototypes",
+      "activities": ["scenario"]
+    }
+  ],
+  "activities": [
+    {
+      "category": "practice",
+      "type": "progressive-match",
+      "difficulty": "intermediate",
+      "payload": {
+        "prompt": "Match the Prototype concepts",
+        "terms": [
+          { "id": "t1", "text": "Function.prototype", "definitionId": "d1" },
+          { "id": "t2", "text": "__proto__ (or [[Prototype]])", "definitionId": "d2" },
+          { "id": "t3", "text": "Object.prototype", "definitionId": "d3" }
+        ],
+        "definitions": [
+          { "id": "d1", "text": "The blueprint object used when a function is called with 'new'" },
+          { "id": "d2", "text": "The actual reference an object has to the object it inherited from" },
+          { "id": "d3", "text": "The top of the prototype chain" }
+        ]
+      }
+    },
+    {
+      "category": "practice",
+      "type": "predict-next-line",
+      "difficulty": "advanced",
+      "payload": {
+        "template": "function Animal(name) {\\n  this.name = name;\\n}\\nAnimal.prototype.speak = function() { return 'Ahhh'; };\\n\\nconst dog = new Animal('Rex');\\ndog.speak = function() { return 'Woof'; };\\n\\nconsole.log(dog.speak()); // What logs here?",
+        "options": [
+          { "id": "o1", "code": "'Ahhh'", "isCorrect": false, "explanation": "Property lookups stop at the first match." },
+          { "id": "o2", "code": "'Woof'", "isCorrect": true, "explanation": "The 'speak' property on the instance itself shadows the 'speak' method on the prototype. Property lookups stop at the instance level before checking the prototype chain." },
+          { "id": "o3", "code": "undefined", "isCorrect": false, "explanation": "The property exists on the instance." }
+        ]
+      }
+    },
+    {
+      "category": "practice",
+      "type": "code-completion",
+      "difficulty": "intermediate",
+      "payload": {
+        "prompt": "Implement pure prototypal inheritance using Object.create()",
+        "template": "const animalMethods = {\\n  eat() { return 'yum'; }\\n};\\n\\n// Create a 'dog' object that inherits from 'animalMethods'\\nconst dog = Object.{{blank1}}({{blank2}});\\ndog.bark = () => 'woof';",
+        "answers": [
+          { "blank1": "create", "blank2": "animalMethods" },
+          { "blank1": "create", "blank2": "animalmethods" }
+        ],
+        "explanation": "Object.create(proto) creates a new object and sets its hidden [[Prototype]] (__proto__) property to the object passed in."
+      }
+    },
+    {
+      "category": "practice",
+      "type": "scenario",
+      "difficulty": "advanced",
+      "payload": {
+        "scenario": "Your team needs to add a 'last()' method to all arrays in your legacy codebase. A junior developer proposes adding it directly via Array.prototype.last = function() { ... }",
+        "question": "Should you approve this PR?",
+        "options": [
+          { "id": "opt1", "text": "Yes, it is memory efficient and immediately available to all arrays.", "isCorrect": false, "explanation": "While it is memory efficient, mutating native prototypes is highly dangerous." },
+          { "id": "opt2", "text": "No, you should never mutate native prototypes.", "isCorrect": true, "explanation": "Mutating built-in prototypes causes global pollution, breaking iterators and potentially causing massive conflicts with future ECMAScript standards or third-party libraries." }
+        ]
+      }
+    }
+  ],
+  "assessment": [
+    {
+      "category": "evaluate",
+      "type": "explain",
+      "difficulty": "interview",
+      "payload": {
+        "prompt": "How does property lookup work in JavaScript? Explain the Prototype Chain.",
+        "modelAnswer": "When you access a property on an object, JS first checks the object itself. If not found, it follows the hidden __proto__ link to its prototype object, checking there. This traversal continues up the chain until it reaches Object.prototype, which has a __proto__ of null. If it's still not found, it returns undefined."
+      }
+    }
+  ]
+}

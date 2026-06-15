@@ -1,0 +1,118 @@
+{
+  "topic": "JavaScript Execution Context",
+  "topicId": "execution-context",
+  "metadata": {
+    "importance": 10,
+    "interviewFrequency": 9,
+    "difficulty": "intermediate",
+    "prerequisites": ["scopes", "variables"]
+  },
+  "objectives": [
+    "Differentiate between Global and Function Execution Contexts",
+    "Trace the Creation and Execution phases",
+    "Identify hoisting behavior of var, let, const, and functions",
+    "Debug ReferenceErrors and TypeErrors related to the TDZ"
+  ],
+  "activityPlan": [
+    {
+      "objective": "Differentiate between Global and Function Execution Contexts",
+      "activities": ["progressive-match"]
+    },
+    {
+      "objective": "Trace the Creation and Execution phases",
+      "activities": ["tap-order", "explain"]
+    },
+    {
+      "objective": "Identify hoisting behavior of var, let, const, and functions",
+      "activities": ["code-completion"]
+    },
+    {
+      "objective": "Debug ReferenceErrors and TypeErrors related to the TDZ",
+      "activities": ["debug", "predict-next-line"]
+    }
+  ],
+  "activities": [
+    {
+      "category": "practice",
+      "type": "progressive-match",
+      "difficulty": "foundation",
+      "payload": {
+        "prompt": "Match the components of an Execution Context",
+        "terms": [
+          { "id": "t1", "text": "Variable Environment", "definitionId": "d1" },
+          { "id": "t2", "text": "Lexical Environment", "definitionId": "d2" },
+          { "id": "t3", "text": "This Binding", "definitionId": "d3" }
+        ],
+        "definitions": [
+          { "id": "d1", "text": "Stores var declarations and function declarations" },
+          { "id": "d2", "text": "Stores let/const declarations and maintains outer scope reference" },
+          { "id": "d3", "text": "Determines the object that is executing the current function" }
+        ]
+      }
+    },
+    {
+      "category": "practice",
+      "type": "tap-order",
+      "difficulty": "intermediate",
+      "payload": {
+        "prompt": "Order the lifecycle of a Function Execution Context",
+        "items": [
+          { "id": "create", "text": "Memory is allocated for variables and functions (Hoisting)" },
+          { "id": "push", "text": "Context is pushed onto the Call Stack" },
+          { "id": "exec", "text": "Code is executed line by line" },
+          { "id": "pop", "text": "Context is popped off the Call Stack" }
+        ],
+        "correctOrder": ["push", "create", "exec", "pop"]
+      }
+    },
+    {
+      "category": "practice",
+      "type": "code-completion",
+      "difficulty": "intermediate",
+      "payload": {
+        "prompt": "Fill in the blank to predict the console output due to hoisting.",
+        "template": "console.log(a);\\nconsole.log(b);\\n\\nvar a = 1;\\nlet b = 2;\\n\\n// What does the first console.log output?\\n// {{blank1}}\\n\\n// What does the second console.log throw?\\n// {{blank2}}",
+        "answers": [
+          { "blank1": "undefined", "blank2": "referenceerror" },
+          { "blank1": "undefined", "blank2": "reference error" }
+        ],
+        "explanation": "'var' is hoisted and initialized with undefined. 'let' is hoisted but remains uninitialized in the Temporal Dead Zone (TDZ)."
+      }
+    },
+    {
+      "category": "practice",
+      "type": "predict-next-line",
+      "difficulty": "advanced",
+      "payload": {
+        "template": "foo();\\nbar();\\n\\nfunction foo() { console.log('A'); }\\nvar bar = function() { console.log('B'); };",
+        "options": [
+          { "id": "o1", "code": "Logs A, then Logs B", "isCorrect": false, "explanation": "Function expressions assigned to variables are not fully hoisted." },
+          { "id": "o2", "code": "Logs A, then throws TypeError: bar is not a function", "isCorrect": true, "explanation": "The 'foo' function declaration is fully hoisted. 'var bar' is hoisted, but its value is 'undefined' until the execution phase. Calling 'undefined()' throws a TypeError." },
+          { "id": "o3", "code": "Throws ReferenceError", "isCorrect": false, "explanation": "It's a TypeError because 'bar' exists, it's just undefined." }
+        ]
+      }
+    },
+    {
+      "category": "practice",
+      "type": "debug",
+      "difficulty": "intermediate",
+      "payload": {
+        "question": "Find the TDZ (Temporal Dead Zone) bug.",
+        "code": "let name = 'Alice';\\n\\nfunction greet() {\\n  console.log(name);\\n  let name = 'Bob';\\n}\\ngreet();",
+        "bugLineIndex": 3,
+        "explanation": "Inside greet(), 'let name' is hoisted to the top of the block scope. This creates a TDZ for 'name' inside the function, hiding the outer 'Alice'. Thus, logging it before initialization throws a ReferenceError."
+      }
+    }
+  ],
+  "assessment": [
+    {
+      "category": "evaluate",
+      "type": "explain",
+      "difficulty": "interview",
+      "payload": {
+        "prompt": "Explain the difference between how 'var' and 'let' are hoisted.",
+        "modelAnswer": "Both are hoisted to the top of their respective scopes during the creation phase. However, 'var' is immediately initialized with 'undefined', whereas 'let' remains uninitialized in the Temporal Dead Zone (TDZ). Accessing 'var' early yields undefined; accessing 'let' early throws a ReferenceError."
+      }
+    }
+  ]
+}
